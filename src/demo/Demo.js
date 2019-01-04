@@ -14,7 +14,7 @@ import PropTypes from 'prop-types'
 export default function Demo({ openTour, isShowingMore, toggleShowMore }) {
   return (
     <div>
-      <Section center>
+      <Section center id="test-section">
         <Logo />
         <Heading h="3" data-tut="reactour__copy">
           Tourist Guide into your React Components

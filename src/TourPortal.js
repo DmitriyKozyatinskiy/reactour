@@ -65,6 +65,7 @@ class TourPortal extends Component {
     disableKeyboardNavigation: PropTypes.bool,
     rounded: PropTypes.number,
     accentColor: PropTypes.string,
+    containerId: PropTypes.string,
   }
 
   static defaultProps = {
@@ -403,6 +404,7 @@ class TourPortal extends Component {
       prevStep,
       rounded,
       accentColor,
+      containerId,
     } = this.props
 
     const {
@@ -450,6 +452,7 @@ class TourPortal extends Component {
               disableInteractionClassName={`${
                 CN.mask.disableInteraction
               } ${highlightedMaskClassName}`}
+              containerId={containerId}
             />
           </div>
           <Guide
@@ -591,7 +594,10 @@ const setNodeState = (node, helper, position) => {
         w,
         h,
         helperPosition: 'center',
+        test: true,
       }
+
+    console.log('ATTRS: ', attrs);
   return function update() {
     return {
       w,

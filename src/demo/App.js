@@ -76,6 +76,7 @@ class App extends Component {
           className="helper"
           rounded={5}
           accentColor={accentColor}
+          containerId="test-section"
         />
       </div>
     )

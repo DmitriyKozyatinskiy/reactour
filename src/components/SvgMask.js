@@ -26,11 +26,27 @@ export default function SvgMask({
   disableInteraction,
   disableInteractionClassName,
   className,
+  containerId,
 }) {
   const width = hx.safe(targetWidth + padding * 2)
   const height = hx.safe(targetHeight + padding * 2)
   const top = hx.safe(targetTop - padding)
   const left = hx.safe(targetLeft - padding)
+  const container = containerId ? document.getElementById(containerId) : null
+  const containerCoordinates = container ? hx.getNodeRect(container) : null
+  const containerRect = containerCoordinates
+    ? {
+        x: containerCoordinates.left,
+        y: containerCoordinates.top,
+        width: containerCoordinates.width,
+        height: containerCoordinates.height,
+      }
+    : {
+        x: 0,
+        y: 0,
+        width: windowWidth,
+        height: windowHeight,
+      }
 
   return (
     <SvgMaskWrapper>
@@ -128,23 +144,7 @@ export default function SvgMask({
             />
           </clipPath>
         </defs>
-        <rect
-          x={0}
-          y={0}
-          width={windowWidth}
-          height={windowHeight}
-          fill="#000000"
-          mask="url(#mask-main)"
-        />
-        <rect
-          x={0}
-          y={0}
-          width={windowWidth}
-          height={windowHeight}
-          fill="#000000"
-          clipPath="url(#clip-path)"
-          pointerEvents="auto"
-        />
+        <rect fill="#000000" mask="url(#mask-main)" {...containerRect} />
         <rect
           x={left}
           y={top}
@@ -171,4 +171,5 @@ SvgMask.propTypes = {
   rounded: PropTypes.number.isRequired,
   disableInteraction: PropTypes.bool.isRequired,
   disableInteractionClassName: PropTypes.string.isRequired,
+  containerId: PropTypes.string,
 }
