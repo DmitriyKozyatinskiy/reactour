@@ -20,6 +20,8 @@ class Tour extends Component {
     onRequestClose: PropTypes.func,
     closeWithMask: PropTypes.bool,
     parentSelector: PropTypes.func,
+    containerId: PropTypes.string,
+    initialNodeId: PropTypes.string,
   }
 
   static defaultProps = {

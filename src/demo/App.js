@@ -67,6 +67,7 @@ class App extends Component {
           isShowingMore={isShowingMore}
         />
         <Tour
+          startAt={1}
           onAfterOpen={this.disableBody}
           onBeforeClose={this.enableBody}
           onRequestClose={this.closeTour}
@@ -77,6 +78,7 @@ class App extends Component {
           rounded={5}
           accentColor={accentColor}
           containerId="test-section"
+          initialNodeId="test-anchor"
         />
       </div>
     )

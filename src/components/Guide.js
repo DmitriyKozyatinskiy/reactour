@@ -8,8 +8,8 @@ const Guide = styled.div`
   transition: transform 0.3s;
   padding: 24px 30px;
   box-shadow: 0 0.5em 3em rgba(0, 0, 0, 0.3);
-  top: 0;
-  left: 0;
+  top: ${props => `${props.initialTop}px` || 0};
+  left: ${props => `${props.initialLeft}px` || 0};
   color: inherit;
   z-index: 1000000;
   max-width: 331px;
@@ -30,6 +30,8 @@ const Guide = styled.div`
       helperHeight,
       helperPosition,
       padding,
+      initialTop,
+      initialLeft,
     } = props
 
     const available = {
@@ -89,7 +91,9 @@ const Guide = styled.div`
 
     const p = pos(helperPosition)
 
-    return `translate(${p[0]}px, ${p[1]}px)`
+    return `translate(calc(${p[0]}px - ${initialLeft}px), calc(${
+      p[1]
+    }px - ${initialTop}px))`
   }};
 `
 

@@ -66,6 +66,7 @@ class TourPortal extends Component {
     rounded: PropTypes.number,
     accentColor: PropTypes.string,
     containerId: PropTypes.string,
+    initialNodeId: PropTypes.string,
   }
 
   static defaultProps = {
@@ -91,6 +92,8 @@ class TourPortal extends Component {
       right: 0,
       bottom: 0,
       left: 0,
+      initialTop: 0,
+      initialLeft: 0,
       width: 0,
       height: 0,
       w: 0,
@@ -110,9 +113,27 @@ class TourPortal extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { isOpen, update, updateDelay } = this.props
+    const { isOpen, update, initialNodeId, updateDelay } = this.props
 
     if (!isOpen && nextProps.isOpen) {
+      console.log('UPDATEA')
+      const initialNode = initialNodeId
+        ? document.getElementById(initialNodeId)
+        : null
+      console.log('INITIAL NODE: ', initialNode)
+      const initialCoordinates = initialNode
+        ? hx.getNodeRect(initialNode)
+        : null
+
+      if (initialCoordinates) {
+        this.setState({
+          initialTop: initialCoordinates.top,
+          initialLeft: initialCoordinates.left,
+        })
+      }
+
+      console.log('COORDS: ', initialCoordinates)
+
       this.open(nextProps.startAt)
     } else if (isOpen && !nextProps.isOpen) {
       this.close()
@@ -122,7 +143,7 @@ class TourPortal extends Component {
       if (nextProps.steps[this.state.current]) {
         setTimeout(this.showStep, updateDelay)
       } else {
-        this.props.onRequestClose()
+        this.close()
       }
     }
 
@@ -143,6 +164,18 @@ class TourPortal extends Component {
     if (this.state.observer) {
       this.state.observer.disconnect()
     }
+  }
+
+  close = event => {
+    console.log('CLOSAE!!!!2fdg')
+    const { onRequestClose } = this.props
+
+    this.setState(({ initialTop, initialLeft }) => ({
+      top: initialTop,
+      left: initialLeft,
+    }))
+
+    onRequestClose(event)
   }
 
   open(startAt) {
@@ -293,12 +326,12 @@ class TourPortal extends Component {
   }
 
   maskClickHandler = e => {
-    const { closeWithMask, onRequestClose } = this.props
+    const { closeWithMask } = this.props
     if (
       closeWithMask &&
       !e.target.classList.contains(CN.mask.disableInteraction)
     ) {
-      onRequestClose(e)
+      this.close(e)
     }
   }
 
@@ -352,12 +385,7 @@ class TourPortal extends Component {
   }
 
   keyDownHandler = e => {
-    const {
-      onRequestClose,
-      nextStep,
-      prevStep,
-      disableKeyboardNavigation,
-    } = this.props
+    const { nextStep, prevStep, disableKeyboardNavigation } = this.props
     e.stopPropagation()
 
     if (disableKeyboardNavigation) {
@@ -367,7 +395,7 @@ class TourPortal extends Component {
     if (e.keyCode === 27) {
       // esc
       e.preventDefault()
-      onRequestClose()
+      this.close()
     }
     if (e.keyCode === 39) {
       // right
@@ -391,7 +419,6 @@ class TourPortal extends Component {
       showNavigation,
       showNavigationNumber,
       showNumber,
-      onRequestClose,
       maskSpace,
       lastStepNextButton,
       nextButton,
@@ -422,6 +449,8 @@ class TourPortal extends Component {
       helperWidth,
       helperHeight,
       helperPosition,
+      initialTop,
+      initialLeft,
     } = this.state
 
     if (isOpen) {
@@ -477,11 +506,13 @@ class TourPortal extends Component {
               [CN.helper.isOpen]: isOpen,
             })}
             accentColor={accentColor}
+            initialTop={initialTop}
+            initialLeft={initialLeft}
           >
             {steps[current] &&
               (typeof steps[current].content === 'function'
                 ? steps[current].content({
-                    close: onRequestClose,
+                    close: this.close,
                     goTo: this.gotoStep,
                     inDOM,
                     step: current + 1,
@@ -527,11 +558,11 @@ class TourPortal extends Component {
                     onClick={
                       current === steps.length - 1
                         ? lastStepNextButton
-                          ? onRequestClose
+                          ? this.close
                           : () => {}
                         : typeof nextStep === 'function'
-                          ? nextStep
-                          : this.nextStep
+                        ? nextStep
+                        : this.nextStep
                     }
                     disabled={
                       !lastStepNextButton && current === steps.length - 1
@@ -541,15 +572,15 @@ class TourPortal extends Component {
                       lastStepNextButton && current === steps.length - 1
                         ? lastStepNextButton
                         : nextButton
-                          ? nextButton
-                          : null
+                        ? nextButton
+                        : null
                     }
                   />
                 )}
               </Controls>
             )}
 
-            {showCloseButton ? <Close onClick={onRequestClose} /> : null}
+            {showCloseButton ? <Close onClick={this.close} /> : null}
           </Guide>
           {this.props.children}
         </div>
@@ -597,7 +628,7 @@ const setNodeState = (node, helper, position) => {
         test: true,
       }
 
-    console.log('ATTRS: ', attrs);
+  console.log('ATTRS: ', attrs)
   return function update() {
     return {
       w,
