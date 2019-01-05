@@ -27,6 +27,7 @@ export default function SvgMask({
   disableInteractionClassName,
   className,
   containerId,
+  onDisableInteractionMouseOver,
 }) {
   const width = hx.safe(targetWidth + padding * 2)
   const height = hx.safe(targetHeight + padding * 2)
@@ -154,6 +155,7 @@ export default function SvgMask({
           fill="transparent"
           display={disableInteraction ? 'block' : 'none'}
           className={disableInteractionClassName}
+          onMouseOver={onDisableInteractionMouseOver || null}
         />
       </svg>
     </SvgMaskWrapper>

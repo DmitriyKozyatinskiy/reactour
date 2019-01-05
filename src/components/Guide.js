@@ -1,11 +1,12 @@
 import styled from 'styled-components'
 import * as hx from '../helpers'
+import * as c from '../constants'
 
 const Guide = styled.div`
   --reactour-accent: ${props => props.accentColor};
   position: fixed;
   background-color: #fff;
-  transition: transform 0.3s;
+  transition: transform ${c.GUIDE_ANIMATION_TIME}ms;
   padding: 24px 30px;
   box-shadow: 0 0.5em 3em rgba(0, 0, 0, 0.3);
   top: ${props => `${props.initialTop}px` || 0};

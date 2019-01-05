@@ -76,6 +76,7 @@ class App extends Component {
           maskClassName="mask"
           className="helper"
           rounded={5}
+          disableInteraction={false}
           accentColor={accentColor}
           containerId="test-section"
           initialNodeId="test-anchor"

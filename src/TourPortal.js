@@ -14,6 +14,7 @@ import {
   SvgMask,
 } from './components/index'
 import * as hx from './helpers'
+import * as c from './constants'
 
 class TourPortal extends Component {
   static propTypes = {
@@ -87,6 +88,7 @@ class TourPortal extends Component {
     super()
     this.state = {
       isOpen: false,
+      isClosing: false,
       current: 0,
       top: 0,
       right: 0,
@@ -113,27 +115,9 @@ class TourPortal extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { isOpen, update, initialNodeId, updateDelay } = this.props
+    const { isOpen, update, updateDelay } = this.props
 
     if (!isOpen && nextProps.isOpen) {
-      console.log('UPDATEA')
-      const initialNode = initialNodeId
-        ? document.getElementById(initialNodeId)
-        : null
-      console.log('INITIAL NODE: ', initialNode)
-      const initialCoordinates = initialNode
-        ? hx.getNodeRect(initialNode)
-        : null
-
-      if (initialCoordinates) {
-        this.setState({
-          initialTop: initialCoordinates.top,
-          initialLeft: initialCoordinates.left,
-        })
-      }
-
-      console.log('COORDS: ', initialCoordinates)
-
       this.open(nextProps.startAt)
     } else if (isOpen && !nextProps.isOpen) {
       this.close()
@@ -143,7 +127,7 @@ class TourPortal extends Component {
       if (nextProps.steps[this.state.current]) {
         setTimeout(this.showStep, updateDelay)
       } else {
-        this.close()
+        this.hide()
       }
     }
 
@@ -166,23 +150,55 @@ class TourPortal extends Component {
     }
   }
 
-  close = event => {
+  hide = event => {
     console.log('CLOSAE!!!!2fdg')
-    const { onRequestClose } = this.props
+    const { initialNodeId, onRequestClose } = this.props
 
-    this.setState(({ initialTop, initialLeft }) => ({
-      top: initialTop,
-      left: initialLeft,
-    }))
+    this.setState(
+      ({ initialTop, initialLeft }) => ({
+        top: initialTop,
+        left: initialLeft,
+        isClosing: true,
+      }),
+      () =>
+        window.setTimeout(() => {
+          const initialNode = initialNodeId
+            ? document.getElementById(initialNodeId)
+            : null
 
-    onRequestClose(event)
+          if (initialNode) {
+            initialNode.style.display = ''
+          }
+          onRequestClose(event)
+        }, c.GUIDE_ANIMATION_TIME - 50)
+    )
   }
 
   open(startAt) {
-    const { onAfterOpen } = this.props
+    const { initialNodeId, onAfterOpen } = this.props
+
+    console.log('UPDATEA')
+    const initialNode = initialNodeId
+      ? document.getElementById(initialNodeId)
+      : null
+    console.log('INITIAL NODE: ', initialNode)
+    const initialCoordinates = initialNode ? hx.getNodeRect(initialNode) : null
+
+    const initialTop = initialCoordinates ? initialCoordinates.top : 0
+    const initialLeft = initialCoordinates ? initialCoordinates.left : 0
+
+    if (initialNode) {
+      initialNode.style.display = 'none'
+    }
+
+    console.log('COORDS: ', initialCoordinates)
+
     this.setState(
       prevState => ({
         isOpen: true,
+        isClosing: false,
+        initialTop,
+        initialLeft,
         current: startAt !== undefined ? startAt : prevState.current,
       }),
       () => {
@@ -331,7 +347,7 @@ class TourPortal extends Component {
       closeWithMask &&
       !e.target.classList.contains(CN.mask.disableInteraction)
     ) {
-      this.close(e)
+      this.hide(e)
     }
   }
 
@@ -395,7 +411,7 @@ class TourPortal extends Component {
     if (e.keyCode === 27) {
       // esc
       e.preventDefault()
-      this.close()
+      this.hide()
     }
     if (e.keyCode === 39) {
       // right
@@ -436,6 +452,7 @@ class TourPortal extends Component {
 
     const {
       isOpen,
+      isClosing,
       current,
       inDOM,
       top: targetTop,
@@ -456,34 +473,38 @@ class TourPortal extends Component {
     if (isOpen) {
       return (
         <div>
-          <div
-            ref={c => (this.mask = c)}
-            onClick={this.maskClickHandler}
-            className={cn(CN.mask.base, {
-              [CN.mask.isOpen]: isOpen,
-            })}
-          >
-            <SvgMask
-              windowWidth={windowWidth}
-              windowHeight={windowHeight}
-              targetWidth={targetWidth}
-              targetHeight={targetHeight}
-              targetTop={targetTop}
-              targetLeft={targetLeft}
-              padding={maskSpace}
-              rounded={rounded}
-              className={maskClassName}
-              disableInteraction={
-                disableInteraction && steps[current].stepInteraction
-                  ? !steps[current].stepInteraction
-                  : disableInteraction
-              }
-              disableInteractionClassName={`${
-                CN.mask.disableInteraction
-              } ${highlightedMaskClassName}`}
-              containerId={containerId}
-            />
-          </div>
+          {
+            !isClosing &&
+            <div
+              ref={c => (this.mask = c)}
+              onClick={this.maskClickHandler}
+              className={cn(CN.mask.base, {
+                [CN.mask.isOpen]: isOpen,
+              })}
+            >
+              <SvgMask
+                windowWidth={windowWidth}
+                windowHeight={windowHeight}
+                targetWidth={targetWidth}
+                targetHeight={targetHeight}
+                targetTop={targetTop}
+                targetLeft={targetLeft}
+                padding={maskSpace}
+                rounded={rounded}
+                className={maskClassName}
+                disableInteraction={
+                  disableInteraction && steps[current].stepInteraction
+                    ? !steps[current].stepInteraction
+                    : disableInteraction
+                }
+                disableInteractionClassName={`${
+                  CN.mask.disableInteraction
+                  } ${highlightedMaskClassName}`}
+                containerId={containerId}
+                onDisableInteractionMouseOver={this.hide}
+              />
+            </div>
+          }
           <Guide
             ref={this.helper}
             targetHeight={targetHeight}
@@ -512,7 +533,7 @@ class TourPortal extends Component {
             {steps[current] &&
               (typeof steps[current].content === 'function'
                 ? steps[current].content({
-                    close: this.close,
+                    close: this.hide,
                     goTo: this.gotoStep,
                     inDOM,
                     step: current + 1,
@@ -558,7 +579,7 @@ class TourPortal extends Component {
                     onClick={
                       current === steps.length - 1
                         ? lastStepNextButton
-                          ? this.close
+                          ? this.hide
                           : () => {}
                         : typeof nextStep === 'function'
                         ? nextStep
@@ -580,7 +601,7 @@ class TourPortal extends Component {
               </Controls>
             )}
 
-            {showCloseButton ? <Close onClick={this.close} /> : null}
+            {showCloseButton ? <Close onClick={this.hide} /> : null}
           </Guide>
           {this.props.children}
         </div>
