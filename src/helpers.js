@@ -1,7 +1,6 @@
 import pick from 'lodash.pick'
 
 export const getNodeRect = node => {
-  console.log('NODE: ', node);
   return pick(node.getBoundingClientRect(), [
     'top',
     'right',

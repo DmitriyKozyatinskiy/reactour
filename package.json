@@ -7,7 +7,7 @@
     "prepare": "npm run lib",
     "start": "webpack-dev-server --mode development --open",
     "prelib": "rimraf dist",
-    "lib": "babel --out-dir dist --ignore *.test.js,src/demo src",
+    "lib": "babel --out-dir dist --ignore *.test.js,src/demo src && cp src/index.css dist/index.css",
     "watch": "babel src --watch --out-dir dist --ignore *.test.js,src/demo",
     "build": "webpack --mode production",
     "lint": "eslint --fix ./; exit 0"

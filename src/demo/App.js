@@ -80,6 +80,7 @@ class App extends Component {
           accentColor={accentColor}
           containerId="test-section"
           initialNodeId="test-anchor"
+          borderColor="red"
         />
       </div>
     )

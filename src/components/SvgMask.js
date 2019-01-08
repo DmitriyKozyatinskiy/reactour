@@ -27,6 +27,7 @@ export default function SvgMask({
   disableInteractionClassName,
   className,
   containerId,
+  borderColor,
   onDisableInteractionMouseOver,
 }) {
   const width = hx.safe(targetWidth + padding * 2)
@@ -57,6 +58,14 @@ export default function SvgMask({
         xmlns="http://www.w3.org/2000/svg"
         className={className}
       >
+        {borderColor && (
+          <path
+            fill="none"
+            className="reactour-dashed-border"
+            stroke={borderColor}
+            d={`M${left} ${top} h ${width} v ${height} h ${-width} v ${-height}`}
+          />
+        )}
         <defs>
           <mask id="mask-main">
             <rect

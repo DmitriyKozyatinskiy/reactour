@@ -1,0 +1,12 @@
+.reactour-dashed-border {
+  stroke-width: 5px;
+  stroke-dasharray: 20;
+  stroke-linecap: round;
+  animation: reactour-moving-border 15s infinite linear;
+}
+
+@keyframes reactour-moving-border {
+  to {
+    stroke-dashoffset: 1000;
+  }
+}

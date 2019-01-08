@@ -68,6 +68,7 @@ class TourPortal extends Component {
     accentColor: PropTypes.string,
     containerId: PropTypes.string,
     initialNodeId: PropTypes.string,
+    borderColor: PropTypes.string,
   }
 
   static defaultProps = {
@@ -151,7 +152,6 @@ class TourPortal extends Component {
   }
 
   hide = event => {
-    console.log('CLOSAE!!!!2fdg')
     const { initialNodeId, onRequestClose } = this.props
 
     this.setState(
@@ -177,11 +177,9 @@ class TourPortal extends Component {
   open(startAt) {
     const { initialNodeId, onAfterOpen } = this.props
 
-    console.log('UPDATEA')
     const initialNode = initialNodeId
       ? document.getElementById(initialNodeId)
       : null
-    console.log('INITIAL NODE: ', initialNode)
     const initialCoordinates = initialNode ? hx.getNodeRect(initialNode) : null
 
     const initialTop = initialCoordinates ? initialCoordinates.top : 0
@@ -190,8 +188,6 @@ class TourPortal extends Component {
     if (initialNode) {
       initialNode.style.display = 'none'
     }
-
-    console.log('COORDS: ', initialCoordinates)
 
     this.setState(
       prevState => ({
@@ -448,6 +444,7 @@ class TourPortal extends Component {
       rounded,
       accentColor,
       containerId,
+      borderColor,
     } = this.props
 
     const {
@@ -473,8 +470,7 @@ class TourPortal extends Component {
     if (isOpen) {
       return (
         <div>
-          {
-            !isClosing &&
+          {!isClosing && (
             <div
               ref={c => (this.mask = c)}
               onClick={this.maskClickHandler}
@@ -499,12 +495,13 @@ class TourPortal extends Component {
                 }
                 disableInteractionClassName={`${
                   CN.mask.disableInteraction
-                  } ${highlightedMaskClassName}`}
+                } ${highlightedMaskClassName}`}
                 containerId={containerId}
+                borderColor={borderColor}
                 onDisableInteractionMouseOver={this.hide}
               />
             </div>
-          }
+          )}
           <Guide
             ref={this.helper}
             targetHeight={targetHeight}
@@ -649,7 +646,6 @@ const setNodeState = (node, helper, position) => {
         test: true,
       }
 
-  console.log('ATTRS: ', attrs)
   return function update() {
     return {
       w,

@@ -22,6 +22,7 @@ class Tour extends Component {
     parentSelector: PropTypes.func,
     containerId: PropTypes.string,
     initialNodeId: PropTypes.string,
+    borderColor: PropTypes.string,
   }
 
   static defaultProps = {
