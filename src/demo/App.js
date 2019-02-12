@@ -81,6 +81,7 @@ class App extends Component {
           containerId="test-section"
           initialNodeId="test-anchor"
           borderColor="red"
+          shouldDisappearOnClose={true}
         />
       </div>
     )

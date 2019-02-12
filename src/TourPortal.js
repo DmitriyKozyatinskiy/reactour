@@ -39,6 +39,7 @@ class TourPortal extends Component {
     showCloseButton: PropTypes.bool,
     showNavigation: PropTypes.bool,
     showNavigationNumber: PropTypes.bool,
+    shouldDisappearOnClose: PropTypes.bool,
     showNumber: PropTypes.bool,
     startAt: PropTypes.number,
     goToStep: PropTypes.number,
@@ -152,7 +153,7 @@ class TourPortal extends Component {
   }
 
   hide = event => {
-    const { initialNodeId, onRequestClose } = this.props
+    const { initialNodeId, shouldDisappearOnClose, onRequestClose } = this.props
 
     this.setState(
       ({ initialTop, initialLeft }) => ({
@@ -161,16 +162,19 @@ class TourPortal extends Component {
         isClosing: true,
       }),
       () =>
-        window.setTimeout(() => {
-          const initialNode = initialNodeId
-            ? document.getElementById(initialNodeId)
-            : null
+        window.setTimeout(
+          () => {
+            const initialNode = initialNodeId
+              ? document.getElementById(initialNodeId)
+              : null
 
-          if (initialNode) {
-            initialNode.style.display = ''
-          }
-          onRequestClose(event)
-        }, c.GUIDE_ANIMATION_TIME - 50)
+            if (initialNode) {
+              initialNode.style.display = ''
+            }
+            onRequestClose(event)
+          },
+          shouldDisappearOnClose ? 0 : c.GUIDE_ANIMATION_TIME - 50
+        )
     )
   }
 
