@@ -168,7 +168,7 @@ class TourPortal extends Component {
               ? document.getElementById(initialNodeId)
               : null
 
-            if (initialNode) {
+            if (initialNode && !shouldDisappearOnClose) {
               initialNode.style.display = ''
             }
             onRequestClose(event)
