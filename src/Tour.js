@@ -14,6 +14,7 @@ function getParentElement(parentSelector) {
 class Tour extends Component {
   static propTypes = {
     isOpen: PropTypes.bool.isRequired,
+    animationType: PropTypes.string,
     portalClassName: PropTypes.string,
     appElement: PropTypes.instanceOf(SafeHTMLElement),
     onAfterOpen: PropTypes.func,

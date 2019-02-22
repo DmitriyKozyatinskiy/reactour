@@ -68,6 +68,7 @@ class App extends Component {
         />
         <Tour
           startAt={1}
+          animationType="scale-out"
           onAfterOpen={this.disableBody}
           onBeforeClose={this.enableBody}
           onRequestClose={this.closeTour}

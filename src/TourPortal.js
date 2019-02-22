@@ -18,6 +18,7 @@ import * as c from './constants'
 
 class TourPortal extends Component {
   static propTypes = {
+    animationType: PropTypes.string,
     badgeContent: PropTypes.func,
     highlightedMaskClassName: PropTypes.string,
     children: PropTypes.oneOfType([PropTypes.node, PropTypes.element]),
@@ -154,13 +155,19 @@ class TourPortal extends Component {
 
   hide = event => {
     const { initialNodeId, shouldDisappearOnClose, onRequestClose } = this.props
+    console.log('shouldDisappearOnClose: ', shouldDisappearOnClose)
 
     this.setState(
-      ({ initialTop, initialLeft }) => ({
-        top: initialTop,
-        left: initialLeft,
-        isClosing: true,
-      }),
+      ({ initialTop, initialLeft }) =>
+        shouldDisappearOnClose
+          ? {
+              isClosing: true,
+            }
+          : {
+              top: initialTop,
+              left: initialLeft,
+              isClosing: true,
+            },
       () =>
         window.setTimeout(
           () => {
@@ -321,17 +328,24 @@ class TourPortal extends Component {
   }
 
   close() {
-    this.setState(prevState => {
-      if (prevState.observer) {
-        prevState.observer.disconnect()
-      }
-      return {
-        isOpen: false,
-        observer: null,
-      }
-    }, this.onBeforeClose)
-    window.removeEventListener('resize', this.showStep)
-    window.removeEventListener('keydown', this.keyDownHandler)
+    const { shouldDisappearOnClose } = this.props
+
+    window.setTimeout(
+      () => {
+        this.setState(prevState => {
+          if (prevState.observer) {
+            prevState.observer.disconnect()
+          }
+          return {
+            isOpen: false,
+            observer: null,
+          }
+        }, this.onBeforeClose)
+        window.removeEventListener('resize', this.showStep)
+        window.removeEventListener('keydown', this.keyDownHandler)
+      },
+      shouldDisappearOnClose ? 550 : 0
+    )
   }
 
   onBeforeClose() {
@@ -427,8 +441,10 @@ class TourPortal extends Component {
 
   render() {
     const {
+      animationType,
       className,
       steps,
+      shouldDisappearOnClose,
       maskClassName,
       showButtons,
       showCloseButton,
@@ -508,6 +524,8 @@ class TourPortal extends Component {
           )}
           <Guide
             ref={this.helper}
+            animationType={animationType}
+            isClosing={isClosing}
             targetHeight={targetHeight}
             targetWidth={targetWidth}
             targetTop={targetTop}
@@ -522,6 +540,7 @@ class TourPortal extends Component {
             padding={maskSpace}
             tabIndex={-1}
             current={current}
+            shouldDisappearOnClose={shouldDisappearOnClose}
             style={steps[current].style ? steps[current].style : {}}
             rounded={rounded}
             className={cn(CN.helper.base, className, {
