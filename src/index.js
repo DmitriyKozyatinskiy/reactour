@@ -1,2 +1,2 @@
-import Tour from './Tour'
-export default Tour
+import Tour from './Tour';
+export default Tour;

@@ -1,7 +1,7 @@
-import React from 'react'
-import styled from 'styled-components'
-import * as hx from '../helpers'
-import PropTypes from 'prop-types'
+import React from 'react';
+import styled from 'styled-components';
+import * as hx from '../helpers';
+import PropTypes from 'prop-types';
 
 const SvgMaskWrapper = styled.div`
   opacity: 0.7;
@@ -12,7 +12,7 @@ const SvgMaskWrapper = styled.div`
   position: fixed;
   z-index: 99999;
   pointer-events: none;
-`
+`;
 
 export default function SvgMask({
   windowWidth,
@@ -28,14 +28,14 @@ export default function SvgMask({
   className,
   containerId,
   borderColor,
-  onDisableInteractionMouseOver,
+  onMouseOver,
 }) {
-  const width = hx.safe(targetWidth + padding * 2)
-  const height = hx.safe(targetHeight + padding * 2)
-  const top = hx.safe(targetTop - padding)
-  const left = hx.safe(targetLeft - padding)
-  const container = containerId ? document.getElementById(containerId) : null
-  const containerCoordinates = container ? hx.getNodeRect(container) : null
+  const width = hx.safe(targetWidth + padding * 2);
+  const height = hx.safe(targetHeight + padding * 2);
+  const top = hx.safe(targetTop - padding);
+  const left = hx.safe(targetLeft - padding);
+  const container = containerId ? document.getElementById(containerId) : null;
+  const containerCoordinates = container ? hx.getNodeRect(container) : null;
   const containerRect = containerCoordinates
     ? {
         x: containerCoordinates.left,
@@ -48,7 +48,7 @@ export default function SvgMask({
         y: 0,
         width: windowWidth,
         height: windowHeight,
-      }
+      };
 
   return (
     <SvgMaskWrapper>
@@ -164,11 +164,11 @@ export default function SvgMask({
           fill="transparent"
           display={disableInteraction ? 'block' : 'none'}
           className={disableInteractionClassName}
-          onMouseOver={onDisableInteractionMouseOver || null}
+          onMouseOver={onMouseOver || null}
         />
       </svg>
     </SvgMaskWrapper>
-  )
+  );
 }
 
 SvgMask.propTypes = {
@@ -182,5 +182,8 @@ SvgMask.propTypes = {
   rounded: PropTypes.number.isRequired,
   disableInteraction: PropTypes.bool.isRequired,
   disableInteractionClassName: PropTypes.string.isRequired,
+  className: PropTypes.string,
   containerId: PropTypes.string,
-}
+  borderColor: PropTypes.string,
+  onMouseOver: PropTypes.func,
+};

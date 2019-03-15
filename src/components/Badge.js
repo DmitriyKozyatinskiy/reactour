@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 const Badge = styled.span`
   position: absolute;
@@ -15,6 +15,6 @@ const Badge = styled.span`
   box-shadow: 0 0.25em 0.5em rgba(0, 0, 0, 0.3);
   top: -0.8125em;
   left: -0.8125em;
-`
+`;
 
-export default Badge
+export default Badge;

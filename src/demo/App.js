@@ -1,63 +1,63 @@
-import React, { Component } from 'react'
-import Demo from './Demo'
-import Tour from '../index'
-import Text from './Text'
-import Glitch from './Glitch'
-import Tooltip from './Tooltip'
-import { Link } from './Button'
-import PropTypes from 'prop-types'
+import React, { Component } from 'react';
+import Demo from './Demo';
+import Tour from '../index';
+import Text from './Text';
+import Glitch from './Glitch';
+import Tooltip from './Tooltip';
+import { Link } from './Button';
+import PropTypes from 'prop-types';
 import {
   disableBodyScroll,
   enableBodyScroll,
   clearAllBodyScrollLocks,
-} from 'body-scroll-lock'
+} from 'body-scroll-lock';
 
-import './styles.css'
+import './styles.css';
 
 class App extends Component {
   constructor() {
-    super()
+    super();
     this.state = {
       isTourOpen: false,
       isShowingMore: false,
-    }
+    };
   }
 
   componentDidMount() {
-    window.addEventListener('keyup', this.keyHandling)
+    window.addEventListener('keyup', this.keyHandling);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('keyup', this.keyHandling)
+    window.removeEventListener('keyup', this.keyHandling);
   }
 
   keyHandling = e => {
     if (e.keyCode === 75) {
-      e.preventDefault()
-      this.openTour()
+      e.preventDefault();
+      this.openTour();
     }
-  }
+  };
 
   toggleShowMore = () => {
     this.setState(prevState => ({
       isShowingMore: !prevState.isShowingMore,
-    }))
-  }
+    }));
+  };
 
   closeTour = () => {
-    this.setState({ isTourOpen: false })
-  }
+    this.setState({ isTourOpen: false });
+  };
 
   openTour = () => {
-    this.setState({ isTourOpen: true })
-  }
+    this.setState({ isTourOpen: true });
+  };
 
-  disableBody = target => disableBodyScroll(target)
-  enableBody = target => enableBodyScroll(target)
+  disableBody = target => disableBodyScroll(target);
+  enableBody = target => enableBodyScroll(target);
 
   render() {
-    const { isTourOpen, isShowingMore } = this.state
-    const accentColor = '#5cb7b7'
+    const { isTourOpen, isShowingMore } = this.state;
+    const accentColor = '#5cb7b7';
 
     return (
       <div>
@@ -85,7 +85,7 @@ class App extends Component {
           shouldDisappearOnClose={true}
         />
       </div>
-    )
+    );
   }
 }
 
@@ -129,7 +129,7 @@ const tourConfig = [
             </Link>
           </Text>
         </div>
-      )
+      );
     },
     style: {
       backgroundColor: 'black',
@@ -141,7 +141,7 @@ const tourConfig = [
     content: function DemoHelperComponent({ goTo }) {
       DemoHelperComponent.propTypes = {
         goTo: PropTypes.func.isRequired,
-      }
+      };
 
       return (
         <div>
@@ -163,7 +163,7 @@ const tourConfig = [
             Please go back to 🚌
           </button>
         </div>
-      )
+      );
     },
   },
   {
@@ -178,7 +178,7 @@ const tourConfig = [
           there is available space, otherwise will{' '}
           <strong>auto position</strong>.
         </Text>
-      )
+      );
     },
     position: 'left',
   },
@@ -209,6 +209,6 @@ const tourConfig = [
       'And the Tour could be observing changes to update the view, try clicking the button…',
     observe: '[data-tut="reactour__state--observe"]',
   },
-]
+];
 
-export default App
+export default App;

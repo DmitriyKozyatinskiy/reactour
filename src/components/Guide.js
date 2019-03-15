@@ -1,6 +1,6 @@
-import styled from 'styled-components'
-import * as hx from '../helpers'
-import * as c from '../constants'
+import styled from 'styled-components';
+import * as hx from '../helpers';
+import * as c from '../constants';
 
 // animation: ${props =>
 //     props.isClosing
@@ -47,14 +47,14 @@ const Guide = styled.div`
       isClosing,
       initialTop,
       initialLeft,
-    } = props
+    } = props;
 
     const available = {
       left: targetLeft,
       right: windowWidth - targetRight,
       top: targetTop,
       bottom: windowHeight - targetBottom,
-    }
+    };
 
     const couldPositionAt = position => {
       return (
@@ -62,32 +62,32 @@ const Guide = styled.div`
         (hx.isHoriz(position)
           ? helperWidth + padding * 2
           : helperHeight + padding * 2)
-      )
-    }
+      );
+    };
 
     const autoPosition = coords => {
-      const positionsOrder = hx.bestPositionOf(available)
+      const positionsOrder = hx.bestPositionOf(available);
       for (let j = 0; j < positionsOrder.length; j++) {
         if (couldPositionAt(positionsOrder[j])) {
-          return coords[positionsOrder[j]]
+          return coords[positionsOrder[j]];
         }
       }
-      return coords.center
-    }
+      return coords.center;
+    };
 
     const pos = helperPosition => {
       const hX = hx.isOutsideX(targetLeft + helperWidth, windowWidth)
         ? hx.isOutsideX(targetRight + padding, windowWidth)
           ? targetRight - helperWidth
           : targetRight - helperWidth + padding
-        : targetLeft - padding
-      const x = hX > padding ? hX : padding
+        : targetLeft - padding;
+      const x = hX > padding ? hX : padding;
       const hY = hx.isOutsideY(targetTop + helperHeight, windowHeight)
         ? hx.isOutsideY(targetBottom + padding, windowHeight)
           ? targetBottom - helperHeight
           : targetBottom - helperHeight + padding
-        : targetTop - padding
-      const y = hY > padding ? hY : padding
+        : targetTop - padding;
+      const y = hY > padding ? hY : padding;
       const coords = {
         top: [x, targetTop - helperHeight - padding * 2],
         right: [targetRight + padding * 2, y],
@@ -97,14 +97,14 @@ const Guide = styled.div`
           windowWidth / 2 - helperWidth / 2,
           windowHeight / 2 - helperHeight / 2,
         ],
-      }
+      };
       if (helperPosition === 'center' || couldPositionAt(helperPosition)) {
-        return coords[helperPosition]
+        return coords[helperPosition];
       }
-      return autoPosition(coords)
-    }
+      return autoPosition(coords);
+    };
 
-    const p = pos(helperPosition)
+    const p = pos(helperPosition);
 
     return `translate(calc(${p[0]}px - ${initialLeft}px), calc(${
       p[1]
@@ -112,8 +112,8 @@ const Guide = styled.div`
       isClosing && shouldDisappearOnClose && animationType !== 'flicker'
         ? 'scale(0)'
         : 'scale(1)'
-    }`
+    }`;
   }};
-`
+`;
 
-export default Guide
+export default Guide;

@@ -1,5 +1,5 @@
-import styled from 'styled-components'
-import { themeColors } from './settings'
+import styled from 'styled-components';
+import { themeColors } from './settings';
 
 export default styled.aside`
   position: fixed;
@@ -13,4 +13,4 @@ export default styled.aside`
   &::-webkit-scrollbar {
     width: 0 !important;
   }
-`
+`;

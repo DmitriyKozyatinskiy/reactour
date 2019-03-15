@@ -1,15 +1,15 @@
-import React from 'react'
-import Section from './Section'
-import Logo from './Logo'
-import Text from './Text'
-import Heading from './Heading'
-import Row from './Row'
-import Box from './Box'
-import Scrollable from './Scrollable'
-import Footer from './Footer'
-import Image from './Image'
-import { Button, Link } from './Button'
-import PropTypes from 'prop-types'
+import React from 'react';
+import Section from './Section';
+import Logo from './Logo';
+import Text from './Text';
+import Heading from './Heading';
+import Row from './Row';
+import Box from './Box';
+import Scrollable from './Scrollable';
+import Footer from './Footer';
+import Image from './Image';
+import { Button, Link } from './Button';
+import PropTypes from 'prop-types';
 
 export default function Demo({ openTour, isShowingMore, toggleShowMore }) {
   return (
@@ -291,11 +291,11 @@ export default function Demo({ openTour, isShowingMore, toggleShowMore }) {
         </Text>
       </Footer>
     </div>
-  )
+  );
 }
 
 Demo.propTypes = {
   openTour: PropTypes.func.isRequired,
   isShowingMore: PropTypes.bool.isRequired,
   toggleShowMore: PropTypes.func.isRequired,
-}
+};

@@ -1,4 +1,4 @@
-import pick from 'lodash.pick'
+import pick from 'lodash.pick';
 
 export const getNodeRect = node => {
   return pick(node.getBoundingClientRect(), [
@@ -8,8 +8,8 @@ export const getNodeRect = node => {
     'left',
     'width',
     'height',
-  ])
-}
+  ]);
+};
 
 export const inView = ({ top, right, bottom, left, w, h, threshold = 0 }) => {
   return (
@@ -17,16 +17,16 @@ export const inView = ({ top, right, bottom, left, w, h, threshold = 0 }) => {
     left >= 0 + threshold &&
     bottom <= h - threshold &&
     right <= w - threshold
-  )
-}
+  );
+};
 
 export const isBody = node =>
   node === document.querySelector('body') ||
-  node === document.querySelector('html')
-export const isHoriz = pos => /(left|right)/.test(pos)
-export const isOutsideX = (val, windowWidth) => val > windowWidth
-export const isOutsideY = (val, windowHeight) => val > windowHeight
-export const safe = sum => (sum < 0 ? 0 : sum)
+  node === document.querySelector('html');
+export const isHoriz = pos => /(left|right)/.test(pos);
+export const isOutsideX = (val, windowWidth) => val > windowWidth;
+export const isOutsideY = (val, windowHeight) => val > windowHeight;
+export const safe = sum => (sum < 0 ? 0 : sum);
 
 export const bestPositionOf = positions => {
   return Object.keys(positions)
@@ -35,5 +35,5 @@ export const bestPositionOf = positions => {
       value: positions[p],
     }))
     .sort((a, b) => b.value - a.value)
-    .map(p => p.position)
-}
+    .map(p => p.position);
+};

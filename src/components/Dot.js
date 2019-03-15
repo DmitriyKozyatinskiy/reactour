@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 const Dot = styled.button`
   counter-increment: dot;
@@ -37,6 +37,6 @@ const Dot = styled.button`
       transform: translate(-50%, -2px);
     }
   }
-`
+`;
 
-export default Dot
+export default Dot;

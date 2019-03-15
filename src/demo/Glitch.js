@@ -1,13 +1,13 @@
-import styled, { keyframes } from 'styled-components'
-import { fontFamily } from './settings'
+import styled, { keyframes } from 'styled-components';
+import { fontFamily } from './settings';
 
 // from http://codepen.io/lbebber/pen/ypgql?editors=0100
-const steps = 20
-const rnd = () => Math.floor(Math.random() * 100)
+const steps = 20;
+const rnd = () => Math.floor(Math.random() * 100);
 const doPercAndValue = (a, i) => ({
   perc: `${i * (100 / steps)}%`,
   value: `clip: rect(${rnd()}px, 9999px, ${rnd()}px, 0)`,
-})
+});
 
 const doKeyframes = () =>
   Array(steps)
@@ -17,11 +17,11 @@ const doKeyframes = () =>
       return `${acc}
 ${next.perc} {
   ${next.value}
-}`
-    }, '')
+}`;
+    }, '');
 
-const anim = keyframes`${doKeyframes()}`
-const anim2 = keyframes`${doKeyframes()}`
+const anim = keyframes`${doKeyframes()}`;
+const anim2 = keyframes`${doKeyframes()}`;
 
 export default styled.div`
     font-size: 3em;
@@ -53,4 +53,4 @@ export default styled.div`
         clip: rect(0, 900px, 0, 0);
         animation: ${anim2} 3s infinite linear alternate-reverse;
   }
-`
+`;

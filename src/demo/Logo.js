@@ -1,7 +1,7 @@
-import React from 'react'
-import styled from 'styled-components'
-import { Shake } from 'reshake'
-import PropTypes from 'prop-types'
+import React from 'react';
+import styled from 'styled-components';
+import { Shake } from 'reshake';
+import PropTypes from 'prop-types';
 
 const LogoWrapper = styled.div`
   font-size: ${props => (props.size ? props.size : '70vw')};
@@ -13,7 +13,7 @@ const LogoWrapper = styled.div`
   @media (min-width: 40em) {
     width: 0.614em;
   }
-`
+`;
 
 export default function Logo({ iso = true, ...props }) {
   return (
@@ -84,9 +84,9 @@ export default function Logo({ iso = true, ...props }) {
         )}
       </svg>
     </LogoWrapper>
-  )
+  );
 }
 
 Logo.propTypes = {
   iso: PropTypes.bool,
-}
+};

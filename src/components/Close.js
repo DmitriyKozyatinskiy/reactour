@@ -1,7 +1,7 @@
-import React from 'react'
-import styled from 'styled-components'
-import SvgButton from './SvgButton'
-import PropTypes from 'prop-types'
+import React from 'react';
+import styled from 'styled-components';
+import SvgButton from './SvgButton';
+import PropTypes from 'prop-types';
 
 function Close({ className, onClick }) {
   return (
@@ -13,13 +13,13 @@ function Close({ className, onClick }) {
         />
       </svg>
     </SvgButton>
-  )
+  );
 }
 
 Close.propTypes = {
   className: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
-}
+};
 
 const StyledClose = styled(Close)`
   position: absolute;
@@ -31,6 +31,6 @@ const StyledClose = styled(Close)`
   &:hover {
     color: #000;
   }
-`
+`;
 
-export default StyledClose
+export default StyledClose;

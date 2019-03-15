@@ -1,5 +1,5 @@
-import styled from 'styled-components'
-import { themeColors } from './settings'
+import styled from 'styled-components';
+import { themeColors } from './settings';
 
 export default styled.span`
   position: relative;
@@ -23,4 +23,4 @@ export default styled.span`
   &:hover:after {
     opacity: 1;
   }
-`
+`;

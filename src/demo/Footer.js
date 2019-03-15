@@ -1,5 +1,5 @@
-import styled from 'styled-components'
-import { themeColors } from './settings'
+import styled from 'styled-components';
+import { themeColors } from './settings';
 
 export default styled.footer`
   width: 100%;
@@ -7,4 +7,4 @@ export default styled.footer`
   text-align: center;
   padding-bottom: 3em;
   padding-top: 1em;
-`
+`;

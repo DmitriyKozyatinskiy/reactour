@@ -1,8 +1,8 @@
-import React, { Component, createRef } from 'react'
-import PropTypes from 'prop-types'
-import cn from 'classnames'
-import scrollSmooth from 'scroll-smooth'
-import Scrollparent from 'scrollparent'
+import React, { Component, createRef } from 'react';
+import PropTypes from 'prop-types';
+import cn from 'classnames';
+import scrollSmooth from 'scroll-smooth';
+import Scrollparent from 'scrollparent';
 import {
   Arrow,
   Close,
@@ -12,9 +12,9 @@ import {
   Navigation,
   Dot,
   SvgMask,
-} from './components/index'
-import * as hx from './helpers'
-import * as c from './constants'
+} from './components/index';
+import * as hx from './helpers';
+import * as c from './constants';
 
 class TourPortal extends Component {
   static propTypes = {
@@ -41,6 +41,7 @@ class TourPortal extends Component {
     showNavigation: PropTypes.bool,
     showNavigationNumber: PropTypes.bool,
     shouldDisappearOnClose: PropTypes.bool,
+    shouldCloseOnMaskHover: PropTypes.bool,
     showNumber: PropTypes.bool,
     startAt: PropTypes.number,
     goToStep: PropTypes.number,
@@ -71,7 +72,7 @@ class TourPortal extends Component {
     containerId: PropTypes.string,
     initialNodeId: PropTypes.string,
     borderColor: PropTypes.string,
-  }
+  };
 
   static defaultProps = {
     showNavigation: true,
@@ -85,13 +86,14 @@ class TourPortal extends Component {
     disableInteraction: false,
     rounded: 0,
     accentColor: '#007aff',
-  }
+  };
 
   constructor() {
-    super()
+    super();
     this.state = {
       isOpen: false,
       isClosing: false,
+      isChangingStep: false,
       current: 0,
       top: 0,
       right: 0,
@@ -105,32 +107,34 @@ class TourPortal extends Component {
       h: 0,
       inDOM: false,
       observer: null,
-    }
-    this.helper = createRef()
-    this.helperElement = null
+      resizeInterval: null,
+    };
+    this.helper = createRef();
+    this.helperElement = null;
   }
 
   componentDidMount() {
-    const { isOpen, startAt } = this.props
+    const { isOpen, startAt } = this.props;
     if (isOpen) {
-      this.open(startAt)
+      this.open(startAt);
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    const { isOpen, update, updateDelay } = this.props
+    const { isOpen, update, updateDelay } = this.props;
 
     if (!isOpen && nextProps.isOpen) {
-      this.open(nextProps.startAt)
+      this.open(nextProps.startAt);
     } else if (isOpen && !nextProps.isOpen) {
-      this.close()
+      this.close();
     }
 
     if (isOpen && update !== nextProps.update) {
       if (nextProps.steps[this.state.current]) {
-        setTimeout(this.showStep, updateDelay)
+        console.log('WILL RECIEVE');
+        setTimeout(this.showStep, updateDelay);
       } else {
-        this.hide()
+        this.hide();
       }
     }
 
@@ -139,23 +143,26 @@ class TourPortal extends Component {
       nextProps.isOpen &&
       this.state.current !== nextProps.goToStep
     ) {
-      this.gotoStep(nextProps.goToStep)
+      this.gotoStep(nextProps.goToStep);
     }
   }
 
   componentWillUnmount() {
-    const { isOpen } = this.props
+    const { isOpen } = this.props;
     if (isOpen) {
-      this.close()
+      this.close();
     }
     if (this.state.observer) {
-      this.state.observer.disconnect()
+      this.state.observer.disconnect();
     }
   }
 
   hide = event => {
-    const { initialNodeId, shouldDisappearOnClose, onRequestClose } = this.props
-    console.log('shouldDisappearOnClose: ', shouldDisappearOnClose)
+    const {
+      initialNodeId,
+      shouldDisappearOnClose,
+      onRequestClose,
+    } = this.props;
 
     this.setState(
       ({ initialTop, initialLeft }) =>
@@ -173,31 +180,50 @@ class TourPortal extends Component {
           () => {
             const initialNode = initialNodeId
               ? document.getElementById(initialNodeId)
-              : null
+              : null;
 
             if (initialNode && !shouldDisappearOnClose) {
-              initialNode.style.display = ''
+              initialNode.style.display = '';
             }
-            onRequestClose(event)
+
+            if (onRequestClose) {
+              onRequestClose(event);
+            }
+
+            this.close();
           },
           shouldDisappearOnClose ? 0 : c.GUIDE_ANIMATION_TIME - 50
         )
-    )
-  }
+    );
+  };
+
+  setResizeInterval = () => {
+    const { resizeInterval } = this.state;
+
+    if (resizeInterval) {
+      window.clearInterval(resizeInterval);
+    }
+
+    const updatedResizeInterval = window.setInterval(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 500);
+
+    this.setState({ resizeInterval: updatedResizeInterval });
+  };
 
   open(startAt) {
-    const { initialNodeId, onAfterOpen } = this.props
+    const { initialNodeId, onAfterOpen } = this.props;
 
     const initialNode = initialNodeId
       ? document.getElementById(initialNodeId)
-      : null
-    const initialCoordinates = initialNode ? hx.getNodeRect(initialNode) : null
+      : null;
+    const initialCoordinates = initialNode ? hx.getNodeRect(initialNode) : null;
 
-    const initialTop = initialCoordinates ? initialCoordinates.top : 0
-    const initialLeft = initialCoordinates ? initialCoordinates.left : 0
+    const initialTop = initialCoordinates ? initialCoordinates.top : 0;
+    const initialLeft = initialCoordinates ? initialCoordinates.left : 0;
 
     if (initialNode) {
-      initialNode.style.display = 'none'
+      initialNode.style.display = 'none';
     }
 
     this.setState(
@@ -209,40 +235,42 @@ class TourPortal extends Component {
         current: startAt !== undefined ? startAt : prevState.current,
       }),
       () => {
-        this.showStep()
-        this.helperElement = this.helper.current
-        this.helper.current.focus()
+        this.showStep();
+        this.helperElement = this.helper.current;
+        this.helper.current.focus();
         if (onAfterOpen) {
-          onAfterOpen(this.helperElement)
+          onAfterOpen(this.helperElement);
         }
       }
-    )
+    );
     // TODO: debounce it.
-    window.addEventListener('resize', this.showStep, false)
-    window.addEventListener('keydown', this.keyDownHandler, false)
+    window.addEventListener('resize', this.showStep, false);
+    window.addEventListener('keydown', this.keyDownHandler, false);
+    this.setResizeInterval();
   }
 
   showStep = () => {
-    const { steps } = this.props
-    const { current } = this.state
-    const step = steps[current]
-    const node = step.selector ? document.querySelector(step.selector) : null
+    const { steps } = this.props;
+    const { current } = this.state;
+    const step = steps[current];
+    const node = step.selector ? document.querySelector(step.selector) : null;
+    console.log('SHOW STEP');
 
     const stepCallback = o => {
       if (step.action && typeof step.action === 'function') {
-        step.action(o)
+        step.action(o);
       }
-    }
+    };
 
     if (step.observe) {
-      const target = document.querySelector(step.observe)
-      const config = { attributes: true, childList: true, characterData: true }
+      const target = document.querySelector(step.observe);
+      const config = { attributes: true, childList: true, characterData: true };
       this.setState(
         prevState => {
           if (prevState.observer) {
             setTimeout(() => {
-              prevState.observer.disconnect()
-            }, 0)
+              prevState.observer.disconnect();
+            }, 0);
           }
           return {
             observer: new MutationObserver(mutations => {
@@ -251,7 +279,7 @@ class TourPortal extends Component {
                   mutation.type === 'childList' &&
                   mutation.addedNodes.length > 0
                 ) {
-                  const cb = () => stepCallback(mutation.addedNodes[0])
+                  const cb = () => stepCallback(mutation.addedNodes[0]);
                   setTimeout(
                     () =>
                       this.calculateNode(
@@ -260,184 +288,211 @@ class TourPortal extends Component {
                         cb
                       ),
                     100
-                  )
+                  );
                 } else if (
                   mutation.type === 'childList' &&
                   mutation.removedNodes.length > 0
                 ) {
-                  const cb = () => stepCallback(node)
-                  this.calculateNode(node, step.position, cb)
+                  const cb = () => stepCallback(node);
+                  this.calculateNode(node, step.position, cb);
                 }
-              })
+              });
             }),
-          }
+          };
         },
         () => this.state.observer.observe(target, config)
-      )
+      );
     } else {
       if (this.state.observer) {
-        this.state.observer.disconnect()
+        this.state.observer.disconnect();
         this.setState({
           observer: null,
-        })
+        });
       }
     }
 
     if (node) {
-      const cb = () => stepCallback(node)
-      this.calculateNode(node, step.position, cb)
+      const cb = () => stepCallback(node);
+      this.calculateNode(node, step.position, cb);
     } else {
       this.setState(
         setNodeState(null, this.helper.current, step.position),
         stepCallback
-      )
+      );
 
       step.selector &&
         console.warn(
           `Doesn't find a DOM node '${step.selector}'.
                     Please check the 'steps' Tour prop Array at position: ${current +
                       1}.`
-        )
+        );
     }
-  }
+  };
 
   calculateNode = (node, stepPosition, cb) => {
-    const { scrollDuration, inViewThreshold, scrollOffset } = this.props
-    const attrs = hx.getNodeRect(node)
+    const { scrollDuration, inViewThreshold, scrollOffset } = this.props;
+    const attrs = hx.getNodeRect(node);
     const w = Math.max(
       document.documentElement.clientWidth,
       window.innerWidth || 0
-    )
+    );
     const h = Math.max(
       document.documentElement.clientHeight,
       window.innerHeight || 0
-    )
+    );
     if (!hx.inView({ ...attrs, w, h, threshold: inViewThreshold })) {
-      const parentScroll = Scrollparent(node)
+      const parentScroll = Scrollparent(node);
       scrollSmooth.to(node, {
         context: hx.isBody(parentScroll) ? window : parentScroll,
         duration: scrollDuration,
         offset: scrollOffset || -(h / 2),
         callback: nd => {
-          this.setState(setNodeState(nd, this.helper.current, stepPosition), cb)
+          this.setState(
+            setNodeState(nd, this.helper.current, stepPosition),
+            cb
+          );
         },
-      })
+      });
     } else {
-      this.setState(setNodeState(node, this.helper.current, stepPosition), cb)
+      this.setState(setNodeState(node, this.helper.current, stepPosition), cb);
     }
-  }
+  };
 
-  close() {
-    const { shouldDisappearOnClose } = this.props
-
+  close = () => {
+    const { shouldDisappearOnClose } = this.props;
     window.setTimeout(
       () => {
         this.setState(prevState => {
           if (prevState.observer) {
-            prevState.observer.disconnect()
+            prevState.observer.disconnect();
           }
           return {
             isOpen: false,
             observer: null,
-          }
-        }, this.onBeforeClose)
-        window.removeEventListener('resize', this.showStep)
-        window.removeEventListener('keydown', this.keyDownHandler)
+          };
+        }, this.onBeforeClose);
+        window.removeEventListener('resize', this.showStep);
+        window.removeEventListener('keydown', this.keyDownHandler);
+        const { resizeInterval } = this.state;
+
+        if (resizeInterval) {
+          window.clearInterval(resizeInterval);
+          this.setState({ resizeInterval: null });
+        }
       },
       shouldDisappearOnClose ? 550 : 0
-    )
-  }
+    );
+  };
 
   onBeforeClose() {
-    const { onBeforeClose } = this.props
+    const { onBeforeClose } = this.props;
+    console.log('onBeforeClose: ', onBeforeClose);
+
     if (onBeforeClose) {
-      onBeforeClose(this.helperElement)
+      onBeforeClose(this.helperElement);
     }
   }
 
   maskClickHandler = e => {
-    const { closeWithMask } = this.props
+    const { closeWithMask } = this.props;
     if (
       closeWithMask &&
       !e.target.classList.contains(CN.mask.disableInteraction)
     ) {
-      this.hide(e)
+      this.hide(e);
     }
-  }
+  };
 
   nextStep = () => {
-    const { steps, getCurrentStep } = this.props
-    this.setState(prevState => {
-      const nextStep =
-        prevState.current < steps.length - 1
-          ? prevState.current + 1
-          : prevState.current
+    const { steps, getCurrentStep, nextStep } = this.props;
+    const { current } = this.state;
 
-      if (typeof getCurrentStep === 'function') {
-        getCurrentStep(nextStep)
-      }
+    if (nextStep) {
+      nextStep();
+    }
 
-      return {
-        current: nextStep,
-      }
-    }, this.showStep)
-  }
+    const nextStepId = current < steps.length - 1 ? current + 1 : current;
+    const newStep = steps[nextStepId];
+    console.log('newSTEP: ', newStep);
+
+    this.setState({ isChangingStep: newStep.delay }, () => {
+      window.setTimeout(() => {
+        if (typeof getCurrentStep === 'function') {
+          getCurrentStep(nextStepId);
+        }
+
+        this.setState({
+          current: nextStepId,
+          isChangingStep: false,
+        });
+      }, newStep.delay || 1);
+    });
+  };
 
   prevStep = () => {
-    const { getCurrentStep } = this.props
-    this.setState(prevState => {
-      const nextStep =
-        prevState.current > 0 ? prevState.current - 1 : prevState.current
+    const { steps, getCurrentStep, prevStep } = this.props;
+    const { current } = this.state;
 
-      if (typeof getCurrentStep === 'function') {
-        getCurrentStep(nextStep)
-      }
+    if (prevStep) {
+      prevStep();
+    }
 
-      return {
-        current: nextStep,
-      }
-    }, this.showStep)
-  }
+    const nextStepId = current > 0 ? current - 1 : current;
+    const newStep = steps[nextStepId];
+
+    this.setState({ isChangingStep: newStep.delay }, () => {
+      window.setTimeout(() => {
+        if (typeof getCurrentStep === 'function') {
+          getCurrentStep(nextStepId);
+        }
+
+        this.setState({
+          current: nextStepId,
+          isChangingStep: false,
+        });
+      }, newStep.delay || 1);
+    });
+  };
 
   gotoStep = n => {
-    const { steps, getCurrentStep } = this.props
+    const { steps, getCurrentStep } = this.props;
     this.setState(prevState => {
-      const nextStep = steps[n] ? n : prevState.current
+      const nextStep = steps[n] ? n : prevState.current;
 
       if (typeof getCurrentStep === 'function') {
-        getCurrentStep(nextStep)
+        getCurrentStep(nextStep);
       }
 
       return {
         current: nextStep,
-      }
-    }, this.showStep)
-  }
+      };
+    }, this.showStep);
+  };
 
   keyDownHandler = e => {
-    const { nextStep, prevStep, disableKeyboardNavigation } = this.props
-    e.stopPropagation()
+    const { disableKeyboardNavigation } = this.props;
+    e.stopPropagation();
 
     if (disableKeyboardNavigation) {
-      return
+      return;
     }
 
     if (e.keyCode === 27) {
       // esc
-      e.preventDefault()
-      this.hide()
+      e.preventDefault();
+      this.hide();
     }
     if (e.keyCode === 39) {
       // right
-      e.preventDefault()
-      typeof nextStep === 'function' ? nextStep() : this.nextStep()
+      e.preventDefault();
+      this.nextStep();
     }
     if (e.keyCode === 37) {
       // left
-      e.preventDefault()
-      typeof prevStep === 'function' ? prevStep() : this.prevStep()
+      e.preventDefault();
+      this.prevStep();
     }
-  }
+  };
 
   render() {
     const {
@@ -445,13 +500,13 @@ class TourPortal extends Component {
       className,
       steps,
       shouldDisappearOnClose,
+      shouldCloseOnMaskHover,
       maskClassName,
       showButtons,
       showCloseButton,
       showNavigation,
       showNavigationNumber,
       showNumber,
-      maskSpace,
       lastStepNextButton,
       nextButton,
       prevButton,
@@ -459,17 +514,16 @@ class TourPortal extends Component {
       highlightedMaskClassName,
       disableInteraction,
       disableDotsNavigation,
-      nextStep,
-      prevStep,
       rounded,
       accentColor,
       containerId,
       borderColor,
-    } = this.props
+    } = this.props;
 
     const {
       isOpen,
       isClosing,
+      isChangingStep,
       current,
       inDOM,
       top: targetTop,
@@ -485,7 +539,14 @@ class TourPortal extends Component {
       helperPosition,
       initialTop,
       initialLeft,
-    } = this.state
+    } = this.state;
+    const currentStep = steps[current];
+    const maskSpace =
+      currentStep.maskSpace === undefined
+        ? this.props.maskSpace
+        : currentStep.maskSpace;
+
+    console.log('isChangingStep: ', isChangingStep);
 
     if (isOpen) {
       return (
@@ -498,28 +559,30 @@ class TourPortal extends Component {
                 [CN.mask.isOpen]: isOpen,
               })}
             >
-              <SvgMask
-                windowWidth={windowWidth}
-                windowHeight={windowHeight}
-                targetWidth={targetWidth}
-                targetHeight={targetHeight}
-                targetTop={targetTop}
-                targetLeft={targetLeft}
-                padding={maskSpace}
-                rounded={rounded}
-                className={maskClassName}
-                disableInteraction={
-                  disableInteraction && steps[current].stepInteraction
-                    ? !steps[current].stepInteraction
-                    : disableInteraction
-                }
-                disableInteractionClassName={`${
-                  CN.mask.disableInteraction
-                } ${highlightedMaskClassName}`}
-                containerId={containerId}
-                borderColor={borderColor}
-                onDisableInteractionMouseOver={this.hide}
-              />
+              {!isChangingStep && (
+                <SvgMask
+                  windowWidth={windowWidth}
+                  windowHeight={windowHeight}
+                  targetWidth={targetWidth}
+                  targetHeight={targetHeight}
+                  targetTop={targetTop}
+                  targetLeft={targetLeft}
+                  padding={maskSpace}
+                  rounded={rounded}
+                  className={maskClassName}
+                  disableInteraction={
+                    disableInteraction && currentStep.stepInteraction
+                      ? !currentStep.stepInteraction
+                      : disableInteraction
+                  }
+                  disableInteractionClassName={`${
+                    CN.mask.disableInteraction
+                  } ${highlightedMaskClassName}`}
+                  containerId={containerId}
+                  borderColor={borderColor}
+                  onMouseOver={shouldCloseOnMaskHover ? this.hide : null}
+                />
+              )}
             </div>
           )}
           <Guide
@@ -537,11 +600,11 @@ class TourPortal extends Component {
             helperWidth={helperWidth}
             helperHeight={helperHeight}
             helperPosition={helperPosition}
-            padding={maskSpace}
+            padding={this.props.maskSpace}
             tabIndex={-1}
             current={current}
             shouldDisappearOnClose={shouldDisappearOnClose}
-            style={steps[current].style ? steps[current].style : {}}
+            style={currentStep.style ? currentStep.style : {}}
             rounded={rounded}
             className={cn(CN.helper.base, className, {
               [CN.helper.isOpen]: isOpen,
@@ -551,8 +614,8 @@ class TourPortal extends Component {
             initialLeft={initialLeft}
           >
             {steps[current] &&
-              (typeof steps[current].content === 'function'
-                ? steps[current].content({
+              (typeof currentStep.content === 'function'
+                ? currentStep.content({
                     close: this.hide,
                     goTo: this.gotoStep,
                     inDOM,
@@ -570,9 +633,7 @@ class TourPortal extends Component {
               <Controls data-tour-elem="controls">
                 {showButtons && (
                   <Arrow
-                    onClick={
-                      typeof prevStep === 'function' ? prevStep : this.prevStep
-                    }
+                    onClick={this.prevStep}
                     disabled={current === 0}
                     label={prevButton ? prevButton : null}
                   />
@@ -601,8 +662,6 @@ class TourPortal extends Component {
                         ? lastStepNextButton
                           ? this.hide
                           : () => {}
-                        : typeof nextStep === 'function'
-                        ? nextStep
                         : this.nextStep
                     }
                     disabled={
@@ -625,10 +684,10 @@ class TourPortal extends Component {
           </Guide>
           {this.props.children}
         </div>
-      )
+      );
     }
 
-    return <div />
+    return <div />;
   }
 }
 
@@ -642,18 +701,18 @@ const CN = {
     base: 'reactour__helper',
     isOpen: 'reactour__helper--is-open',
   },
-}
+};
 
 const setNodeState = (node, helper, position) => {
   const w = Math.max(
     document.documentElement.clientWidth,
     window.innerWidth || 0
-  )
+  );
   const h = Math.max(
     document.documentElement.clientHeight,
     window.innerHeight || 0
-  )
-  const { width: helperWidth, height: helperHeight } = hx.getNodeRect(helper)
+  );
+  const { width: helperWidth, height: helperHeight } = hx.getNodeRect(helper);
   const attrs = node
     ? hx.getNodeRect(node)
     : {
@@ -667,7 +726,7 @@ const setNodeState = (node, helper, position) => {
         h,
         helperPosition: 'center',
         test: true,
-      }
+      };
 
   return function update() {
     return {
@@ -678,8 +737,8 @@ const setNodeState = (node, helper, position) => {
       helperPosition: position,
       ...attrs,
       inDOM: node ? true : false,
-    }
-  }
-}
+    };
+  };
+};
 
-export default TourPortal
+export default TourPortal;

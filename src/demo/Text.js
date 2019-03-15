@@ -1,5 +1,5 @@
-import styled from 'styled-components'
-import { fontFamily, themeColors } from './settings'
+import styled from 'styled-components';
+import { fontFamily, themeColors } from './settings';
 
 export default styled.p`
   font-family: ${fontFamily};
@@ -12,4 +12,4 @@ export default styled.p`
       : themeColors.black};
   line-height: 1.5;
   font-size: ${props => (props.size ? props.size : 'inherit')};
-`
+`;

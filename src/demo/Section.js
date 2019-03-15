@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 export default styled.section`
   min-height: 100vh;
@@ -7,4 +7,4 @@ export default styled.section`
   padding: 1em;
   text-align: ${props =>
     props.center ? 'center' : props.align ? props.align : 'left'};
-`
+`;

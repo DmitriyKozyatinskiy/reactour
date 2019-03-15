@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 export default styled.div`
   flex: 0 0 100%;
@@ -9,4 +9,4 @@ export default styled.div`
     flex: ${props => (props.width ? `0 0 ${props.width}` : 1)};
     width: ${props => (props.width ? props.width : '100%')};
   }
-`
+`;
