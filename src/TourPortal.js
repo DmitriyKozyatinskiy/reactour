@@ -131,7 +131,6 @@ class TourPortal extends Component {
 
     if (isOpen && update !== nextProps.update) {
       if (nextProps.steps[this.state.current]) {
-        console.log('WILL RECIEVE');
         setTimeout(this.showStep, updateDelay);
       } else {
         this.hide();
@@ -254,7 +253,6 @@ class TourPortal extends Component {
     const { current } = this.state;
     const step = steps[current];
     const node = step.selector ? document.querySelector(step.selector) : null;
-    console.log('SHOW STEP');
 
     const stepCallback = o => {
       if (step.action && typeof step.action === 'function') {
@@ -386,7 +384,6 @@ class TourPortal extends Component {
 
   onBeforeClose() {
     const { onBeforeClose } = this.props;
-    console.log('onBeforeClose: ', onBeforeClose);
 
     if (onBeforeClose) {
       onBeforeClose(this.helperElement);
@@ -413,7 +410,6 @@ class TourPortal extends Component {
 
     const nextStepId = current < steps.length - 1 ? current + 1 : current;
     const newStep = steps[nextStepId];
-    console.log('newSTEP: ', newStep);
 
     this.setState({ isChangingStep: newStep.delay }, () => {
       window.setTimeout(() => {
@@ -533,7 +529,7 @@ class TourPortal extends Component {
       width: targetWidth,
       height: targetHeight,
       w: windowWidth,
-      h: windowHeight,
+      h: windowHeight,  
       helperWidth,
       helperHeight,
       helperPosition,
@@ -545,9 +541,7 @@ class TourPortal extends Component {
       currentStep.maskSpace === undefined
         ? this.props.maskSpace
         : currentStep.maskSpace;
-
-    console.log('isChangingStep: ', isChangingStep);
-
+    
     if (isOpen) {
       return (
         <div>

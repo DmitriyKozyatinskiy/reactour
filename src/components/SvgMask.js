@@ -41,7 +41,7 @@ export default function SvgMask({
         x: containerCoordinates.left,
         y: containerCoordinates.top,
         width: containerCoordinates.width,
-        height: containerCoordinates.height,
+        height: Math.ceil(containerCoordinates.height),
       }
     : {
         x: 0,
