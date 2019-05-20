@@ -214,20 +214,19 @@ class TourPortal extends Component {
 
   open(startAt) {
     const { initialNodeId, startDelay, onAfterOpen } = this.props;
+    const initialNode = initialNodeId
+      ? document.getElementById(initialNodeId)
+      : null;
+    const initialCoordinates = initialNode ? hx.getNodeRect(initialNode) : null;
 
-    window.setInterval(() => {
-      const initialNode = initialNodeId
-        ? document.getElementById(initialNodeId)
-        : null;
-      const initialCoordinates = initialNode ? hx.getNodeRect(initialNode) : null;
+    const initialTop = initialCoordinates ? initialCoordinates.top : 0;
+    const initialLeft = initialCoordinates ? initialCoordinates.left : 0;
 
-      const initialTop = initialCoordinates ? initialCoordinates.top : 0;
-      const initialLeft = initialCoordinates ? initialCoordinates.left : 0;
+    if (initialNode) {
+      initialNode.style.display = 'none';
+    }
 
-      if (initialNode) {
-        initialNode.style.display = 'none';
-      }
-
+    window.setTimeout(() => {
       this.setState(
         prevState => ({
           isOpen: true,
@@ -245,6 +244,7 @@ class TourPortal extends Component {
           }
         }
       );
+
       // TODO: debounce it.
       window.addEventListener('resize', this.showStep, false);
       window.addEventListener('keydown', this.keyDownHandler, false);
@@ -702,6 +702,12 @@ const CN = {
 };
 
 const setNodeState = (node, helper, position) => {
+  if (!helper) {
+    return function update() {
+      return {};
+    };
+  }
+
   const w = Math.max(
     document.documentElement.clientWidth,
     window.innerWidth || 0
@@ -710,7 +716,8 @@ const setNodeState = (node, helper, position) => {
     document.documentElement.clientHeight,
     window.innerHeight || 0
   );
-  const { width: helperWidth, height: helperHeight } = hx.getNodeRect(helper);
+  const rect = hx.getNodeRect(helper);
+  const { width: helperWidth, height: helperHeight } = rect;
   const attrs = node
     ? hx.getNodeRect(node)
     : {
