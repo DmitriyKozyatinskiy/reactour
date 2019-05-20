@@ -18,6 +18,7 @@ import * as c from './constants';
 
 class TourPortal extends Component {
   static propTypes = {
+    startDelay: PropTypes.number,
     animationType: PropTypes.string,
     badgeContent: PropTypes.func,
     highlightedMaskClassName: PropTypes.string,
@@ -84,6 +85,7 @@ class TourPortal extends Component {
     maskSpace: 10,
     updateDelay: 1,
     disableInteraction: false,
+    startDelay: 0,
     rounded: 0,
     accentColor: '#007aff',
   };
@@ -211,41 +213,43 @@ class TourPortal extends Component {
   };
 
   open(startAt) {
-    const { initialNodeId, onAfterOpen } = this.props;
+    const { initialNodeId, startDelay, onAfterOpen } = this.props;
 
-    const initialNode = initialNodeId
-      ? document.getElementById(initialNodeId)
-      : null;
-    const initialCoordinates = initialNode ? hx.getNodeRect(initialNode) : null;
+    window.setInterval(() => {
+      const initialNode = initialNodeId
+        ? document.getElementById(initialNodeId)
+        : null;
+      const initialCoordinates = initialNode ? hx.getNodeRect(initialNode) : null;
 
-    const initialTop = initialCoordinates ? initialCoordinates.top : 0;
-    const initialLeft = initialCoordinates ? initialCoordinates.left : 0;
+      const initialTop = initialCoordinates ? initialCoordinates.top : 0;
+      const initialLeft = initialCoordinates ? initialCoordinates.left : 0;
 
-    if (initialNode) {
-      initialNode.style.display = 'none';
-    }
-
-    this.setState(
-      prevState => ({
-        isOpen: true,
-        isClosing: false,
-        initialTop,
-        initialLeft,
-        current: startAt !== undefined ? startAt : prevState.current,
-      }),
-      () => {
-        this.showStep();
-        this.helperElement = this.helper.current;
-        this.helper.current.focus();
-        if (onAfterOpen) {
-          onAfterOpen(this.helperElement);
-        }
+      if (initialNode) {
+        initialNode.style.display = 'none';
       }
-    );
-    // TODO: debounce it.
-    window.addEventListener('resize', this.showStep, false);
-    window.addEventListener('keydown', this.keyDownHandler, false);
-    this.setResizeInterval();
+
+      this.setState(
+        prevState => ({
+          isOpen: true,
+          isClosing: false,
+          initialTop,
+          initialLeft,
+          current: startAt !== undefined ? startAt : prevState.current,
+        }),
+        () => {
+          this.showStep();
+          this.helperElement = this.helper.current;
+          this.helper.current.focus();
+          if (onAfterOpen) {
+            onAfterOpen(this.helperElement);
+          }
+        }
+      );
+      // TODO: debounce it.
+      window.addEventListener('resize', this.showStep, false);
+      window.addEventListener('keydown', this.keyDownHandler, false);
+      this.setResizeInterval();
+    }, startDelay);
   }
 
   showStep = () => {
@@ -529,7 +533,7 @@ class TourPortal extends Component {
       width: targetWidth,
       height: targetHeight,
       w: windowWidth,
-      h: windowHeight,  
+      h: windowHeight,
       helperWidth,
       helperHeight,
       helperPosition,
@@ -541,7 +545,7 @@ class TourPortal extends Component {
       currentStep.maskSpace === undefined
         ? this.props.maskSpace
         : currentStep.maskSpace;
-    
+
     if (isOpen) {
       return (
         <div>
