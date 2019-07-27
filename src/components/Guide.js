@@ -6,6 +6,7 @@ import * as c from '../constants';
 //     props.isClosing
 //       ? 'scale-out-center 0.2s cubic-bezier(0.55, 0.085, 0.68, 0.53) both'
 //       : 'none'}
+const isIE = hx.isIE();
 
 const Guide = styled.div`
   --reactour-accent: ${props => props.accentColor};
@@ -106,7 +107,11 @@ const Guide = styled.div`
 
     const p = pos(helperPosition);
 
-    return `translate(calc(${p[0]}px - ${initialLeft}px), calc(${
+    return isIE ? `translateX(${p[0]}px) translateX(-${initialLeft}px) translateY(${p[1]}px) translateY(-${initialTop}px) ${
+      isClosing && shouldDisappearOnClose && animationType !== 'flicker'
+        ? 'scale(0)'
+        : 'scale(1)'
+    }` : `translate(calc(${p[0]}px - ${initialLeft}px), calc(${
       p[1]
     }px - ${initialTop}px)) ${
       isClosing && shouldDisappearOnClose && animationType !== 'flicker'

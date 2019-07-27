@@ -37,3 +37,5 @@ export const bestPositionOf = positions => {
     .sort((a, b) => b.value - a.value)
     .map(p => p.position);
 };
+
+export const isIE = () => !!window.MSInputMethodContext && !!document.documentMode;

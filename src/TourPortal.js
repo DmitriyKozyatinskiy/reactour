@@ -206,7 +206,7 @@ class TourPortal extends Component {
     }
 
     const updatedResizeInterval = window.setInterval(() => {
-      window.dispatchEvent(new Event('resize'));
+      window.dispatchEvent(new CustomEvent('resize'));
     }, 500);
 
     this.setState({ resizeInterval: updatedResizeInterval });

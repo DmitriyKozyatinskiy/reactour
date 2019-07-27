@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+
 import Demo from './Demo';
 import Tour from '../index';
 import Text from './Text';
