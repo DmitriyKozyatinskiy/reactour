@@ -147,7 +147,7 @@ const Guide = styled.div`
     return `
       top: calc(${p[1]}px - ${initialTop}px);
       left: calc(${p[0]}px - ${initialLeft}px);
-      tttransform: ${transform};
+      transform: ${transform};
     `;
   }};
 `;

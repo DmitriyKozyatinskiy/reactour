@@ -239,7 +239,7 @@ class TourPortal extends Component {
         () => {
           this.showStep();
           this.helperElement = this.helper.current;
-          this.helper.current.focus();
+          this.helper.current && this.helper.current.focus();
           if (onAfterOpen) {
             onAfterOpen(this.helperElement);
           }
