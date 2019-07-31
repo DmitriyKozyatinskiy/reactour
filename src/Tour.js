@@ -26,7 +26,6 @@ class Tour extends Component {
     containerId: PropTypes.string,
     initialNodeId: PropTypes.string,
     borderColor: PropTypes.string,
-    shouldDisappearOnClose: PropTypes.bool,
   };
 
   static defaultProps = {

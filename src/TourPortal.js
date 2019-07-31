@@ -41,6 +41,7 @@ class TourPortal extends Component {
     showCloseButton: PropTypes.bool,
     showNavigation: PropTypes.bool,
     showNavigationNumber: PropTypes.bool,
+    shouldAppearStatically: PropTypes.bool,
     shouldDisappearOnClose: PropTypes.bool,
     shouldCloseOnMaskHover: PropTypes.bool,
     showNumber: PropTypes.bool,
@@ -499,6 +500,7 @@ class TourPortal extends Component {
       animationType,
       className,
       steps,
+      shouldAppearStatically,
       shouldDisappearOnClose,
       shouldCloseOnMaskHover,
       maskClassName,
@@ -601,6 +603,7 @@ class TourPortal extends Component {
             padding={this.props.maskSpace}
             tabIndex={-1}
             current={current}
+            shouldAppearStatically={shouldAppearStatically}
             shouldDisappearOnClose={shouldDisappearOnClose}
             style={currentStep.style ? currentStep.style : {}}
             rounded={rounded}

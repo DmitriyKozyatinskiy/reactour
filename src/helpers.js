@@ -34,7 +34,7 @@ export const bestPositionOf = positions => {
       position: p,
       value: positions[p],
     }))
-    .sort((a, b) => b.value - a.value)
+    // .sort((a, b) => b.value - a.value)
     .map(p => p.position);
 };
 

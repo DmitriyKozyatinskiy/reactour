@@ -81,8 +81,9 @@ class App extends Component {
           disableInteraction={false}
           accentColor={accentColor}
           containerId="test-section"
-          initialNodeId="test-anchor"
+          // initialNodeId="test-anchor"
           borderColor="red"
+          shouldAppearStatically={true}
           shouldDisappearOnClose={true}
         />
       </div>
