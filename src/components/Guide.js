@@ -92,7 +92,7 @@ const Guide = styled.div`
   z-index: 1000000;
   max-width: 331px;
   min-width: 150px;
-  outline: 0;
+  outline: none !important;
   padding-right: 40px;
   border-radius: ${props => props.rounded}px;
   animation: ${props => {
