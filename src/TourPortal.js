@@ -213,6 +213,12 @@ class TourPortal extends Component {
     this.setState({ resizeInterval: updatedResizeInterval });
   };
 
+  handleHighlightAreaDragOver = (event) => {
+    if (event.target.id === 'js-reactour-highlight-area') {
+      this.hide();
+    }
+  };
+
   open(startAt) {
     const { initialNodeId, startDelay, onAfterOpen } = this.props;
     const initialNode = initialNodeId
@@ -249,6 +255,7 @@ class TourPortal extends Component {
       // TODO: debounce it.
       window.addEventListener('resize', this.showStep, false);
       window.addEventListener('keydown', this.keyDownHandler, false);
+      document.addEventListener('dragenter', this.handleHighlightAreaDragOver, false);
       this.setResizeInterval();
     }, startDelay);
   }
@@ -374,8 +381,11 @@ class TourPortal extends Component {
             observer: null,
           };
         }, this.onBeforeClose);
+        
         window.removeEventListener('resize', this.showStep);
         window.removeEventListener('keydown', this.keyDownHandler);
+        document.removeEventListener('dragenter', this.handleHighlightAreaDragOver);
+
         const { resizeInterval } = this.state;
 
         if (resizeInterval) {

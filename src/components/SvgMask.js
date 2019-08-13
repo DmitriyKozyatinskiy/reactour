@@ -160,10 +160,11 @@ export default function SvgMask({
           y={top}
           width={width}
           height={height}
+          id="js-reactour-highlight-area"
           pointerEvents="auto"
           fill="transparent"
           display={disableInteraction ? 'block' : 'none'}
-          className={disableInteractionClassName}
+          className={disableInteractionClassName || ''}
           onMouseOver={onMouseOver || null}
         />
       </svg>
