@@ -165,6 +165,11 @@ class TourPortal extends Component {
       shouldDisappearOnClose,
       onRequestClose,
     } = this.props;
+    const { resizeInterval } = this.state;
+
+    if (resizeInterval) {
+      window.clearInterval(resizeInterval);
+    }
 
     this.setState(
       ({ initialTop, initialLeft }) =>
@@ -207,7 +212,7 @@ class TourPortal extends Component {
     }
 
     const updatedResizeInterval = window.setInterval(() => {
-      window.dispatchEvent(new CustomEvent('resize'));
+      // window.dispatchEvent(new CustomEvent('resize'));
     }, 500);
 
     this.setState({ resizeInterval: updatedResizeInterval });
@@ -243,7 +248,7 @@ class TourPortal extends Component {
           current: startAt !== undefined ? startAt : prevState.current,
         }),
         () => {
-          this.showStep();
+          this.showStep({ isInitial: true });
           this.helperElement = this.helper.current;
           this.helper.current && this.helper.current.focus();
           if (onAfterOpen) {
@@ -260,11 +265,13 @@ class TourPortal extends Component {
     }, startDelay);
   }
 
-  showStep = () => {
+  showStep = ({ isInitial } = {}) => {
     const { steps } = this.props;
     const { current } = this.state;
     const step = steps[current];
     const node = step.selector ? document.querySelector(step.selector) : null;
+
+    (isInitial && node) && node.scrollIntoView({ block: 'center', inline: 'center' });
 
     const stepCallback = o => {
       if (step.action && typeof step.action === 'function') {
@@ -381,7 +388,7 @@ class TourPortal extends Component {
             observer: null,
           };
         }, this.onBeforeClose);
-        
+
         window.removeEventListener('resize', this.showStep);
         window.removeEventListener('keydown', this.keyDownHandler);
         document.removeEventListener('dragenter', this.handleHighlightAreaDragOver);
@@ -590,6 +597,7 @@ class TourPortal extends Component {
                   } ${highlightedMaskClassName}`}
                   containerId={containerId}
                   borderColor={borderColor}
+                  onClick={shouldCloseOnMaskHover ? this.hide : null}
                   onMouseOver={shouldCloseOnMaskHover ? this.hide : null}
                 />
               )}
