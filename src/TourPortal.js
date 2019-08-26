@@ -151,6 +151,9 @@ class TourPortal extends Component {
 
   componentWillUnmount() {
     const { isOpen } = this.props;
+
+    this.clearResizeInterval();
+
     if (isOpen) {
       this.close();
     }
@@ -165,11 +168,8 @@ class TourPortal extends Component {
       shouldDisappearOnClose,
       onRequestClose,
     } = this.props;
-    const { resizeInterval } = this.state;
 
-    if (resizeInterval) {
-      window.clearInterval(resizeInterval);
-    }
+    this.clearResizeInterval();
 
     this.setState(
       ({ initialTop, initialLeft }) =>
@@ -212,10 +212,19 @@ class TourPortal extends Component {
     }
 
     const updatedResizeInterval = window.setInterval(() => {
-      // window.dispatchEvent(new CustomEvent('resize'));
+      window.dispatchEvent(new CustomEvent('resize'));
     }, 500);
 
+
     this.setState({ resizeInterval: updatedResizeInterval });
+  };
+
+  clearResizeInterval = () => {
+    const { resizeInterval } = this.state;
+
+    if (resizeInterval) {
+      window.clearInterval(resizeInterval);
+    }
   };
 
   handleHighlightAreaDragOver = (event) => {
@@ -261,8 +270,13 @@ class TourPortal extends Component {
       window.addEventListener('resize', this.showStep, false);
       window.addEventListener('keydown', this.keyDownHandler, false);
       document.addEventListener('dragenter', this.handleHighlightAreaDragOver, false);
-      this.setResizeInterval();
     }, startDelay);
+
+    this.setResizeInterval();
+    // window.setTimeout(
+    //   () => window.dispatchEvent(new CustomEvent('resize')),
+    //   1000,
+    // );
   }
 
   showStep = ({ isInitial } = {}) => {
@@ -377,6 +391,9 @@ class TourPortal extends Component {
 
   close = () => {
     const { shouldDisappearOnClose } = this.props;
+
+    this.clearResizeInterval();
+
     window.setTimeout(
       () => {
         this.setState(prevState => {
@@ -393,12 +410,7 @@ class TourPortal extends Component {
         window.removeEventListener('keydown', this.keyDownHandler);
         document.removeEventListener('dragenter', this.handleHighlightAreaDragOver);
 
-        const { resizeInterval } = this.state;
-
-        if (resizeInterval) {
-          window.clearInterval(resizeInterval);
-          this.setState({ resizeInterval: null });
-        }
+        this.clearResizeInterval();
       },
       shouldDisappearOnClose ? 550 : 0
     );
