@@ -257,7 +257,7 @@ class TourPortal extends Component {
           current: startAt !== undefined ? startAt : prevState.current,
         }),
         () => {
-          this.showStep({ isInitial: true });
+          // this.showStep({ isInitial: true });
           this.helperElement = this.helper.current;
           this.helper.current && this.helper.current.focus();
           if (onAfterOpen) {
