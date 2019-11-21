@@ -10,7 +10,7 @@ const SvgMaskWrapper = styled.div`
   top: 0;
   height: 100%;
   position: fixed;
-  z-index: 99999;
+  z-index: 9999999999;
   pointer-events: none;
 `;
 
@@ -57,6 +57,7 @@ export default function SvgMask({
         height={windowHeight}
         xmlns="http://www.w3.org/2000/svg"
         className={className}
+        style={{ zIndex: '9999999999' }}
       >
         {borderColor && (
           <path
@@ -64,6 +65,7 @@ export default function SvgMask({
             className="reactour-dashed-border"
             stroke={borderColor}
             d={`M${left} ${top} h ${width} v ${height} h ${-width} v ${-height}`}
+            style={{ zIndex: '9999999999' }}
           />
         )}
         <defs>
