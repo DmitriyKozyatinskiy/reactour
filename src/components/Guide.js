@@ -89,7 +89,7 @@ const Guide = styled.div`
   #top: ${props => `${props.initialTop}px` || 0};
   #left: ${props => `${props.initialLeft}px` || 0};
   color: inherit;
-  z-index: 1000000;
+  z-index: 99999999999;
   max-width: 331px;
   min-width: 150px;
   outline: none !important;

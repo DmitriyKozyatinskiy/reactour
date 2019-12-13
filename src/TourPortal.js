@@ -579,11 +579,11 @@ class TourPortal extends Component {
 
     if (isOpen) {
       return (
-        <div style={{ zIndex: '9999999999' }}>
+        <div style={{ position: 'relative', zIndex: '9999999999' }}>
           {!isClosing && (
             <div
               ref={c => (this.mask = c)}
-              style={{ zIndex: '9999999999' }}
+              style={{ position: 'relative', zIndex: '9999999999' }}
               onClick={this.maskClickHandler}
               className={cn(CN.mask.base, {
                 [CN.mask.isOpen]: isOpen,

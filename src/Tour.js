@@ -40,6 +40,8 @@ class Tour extends Component {
   componentDidMount() {
     this.node = document.createElement('div');
     this.node.className = this.props.portalClassName;
+    this.node.style.position = 'relative';
+    this.node.style.zIndex = '9999999999';
     const parent = getParentElement(this.props.parentSelector);
     parent.appendChild(this.node);
     this.renderPortal(this.props);
