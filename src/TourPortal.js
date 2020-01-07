@@ -285,7 +285,7 @@ class TourPortal extends Component {
     const step = steps[current];
     const node = step.selector ? document.querySelector(step.selector) : null;
 
-    (isInitial && node) && node.scrollIntoView({ block: 'center', inline: 'center' });
+    // (isInitial && node) && node.scrollIntoView({ block: 'center', inline: 'center' });
 
     const stepCallback = o => {
       if (step.action && typeof step.action === 'function') {
@@ -373,17 +373,24 @@ class TourPortal extends Component {
     );
     if (!hx.inView({ ...attrs, w, h, threshold: inViewThreshold })) {
       const parentScroll = Scrollparent(node);
-      scrollSmooth.to(node, {
-        context: hx.isBody(parentScroll) ? window : parentScroll,
-        duration: scrollDuration,
-        offset: scrollOffset || -(h / 2),
-        callback: nd => {
-          this.setState(
-            setNodeState(nd, this.helper.current, stepPosition),
-            cb
-          );
-        },
-      });
+      node.scrollIntoViewIfNeeded();
+      window.setTimeout(() => {
+        this.setState(
+          setNodeState(node, this.helper.current, stepPosition),
+          cb
+        );
+      }, 100);
+      // scrollSmooth.to(node, {
+      //   context: hx.isBody(parentScroll) ? window : parentScroll,
+      //   duration: scrollDuration,
+      //   // offset: scrollOffset || -(h / 2),
+      //   callback: nd => {
+      //     this.setState(
+      //       setNodeState(nd, this.helper.current, stepPosition),
+      //       cb
+      //     );
+      //   },
+      // });
     } else {
       this.setState(setNodeState(node, this.helper.current, stepPosition), cb);
     }
