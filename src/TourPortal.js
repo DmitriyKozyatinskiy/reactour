@@ -91,12 +91,14 @@ class TourPortal extends Component {
     accentColor: '#007aff',
   };
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+
     this.state = {
       isOpen: false,
       isClosing: false,
       isChangingStep: false,
+      isCurrentStepCoordinatesSaved: false,
       current: 0,
       top: 0,
       right: 0,
@@ -123,31 +125,50 @@ class TourPortal extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { isOpen, update, updateDelay } = this.props;
+  componentDidUpdate (prevProps) {
+    const { isOpen, update, startAt, steps, goToStep, updateDelay } = this.props;
+    const { current } = this.state;
 
-    if (!isOpen && nextProps.isOpen) {
-      this.open(nextProps.startAt);
-    } else if (isOpen && !nextProps.isOpen) {
+    if (!prevProps.isOpen && isOpen) {
+      this.open(startAt);
+    } else if (prevProps.isOpen && !isOpen) {
       this.close();
     }
 
-    if (isOpen && update !== nextProps.update) {
-      if (nextProps.steps[this.state.current]) {
+    if (prevProps.isOpen && prevProps.update !== update) {
+      if (steps[current]) {
         setTimeout(this.showStep, updateDelay);
       } else {
         this.hide();
       }
     }
 
-    if (
-      isOpen &&
-      nextProps.isOpen &&
-      this.state.current !== nextProps.goToStep
-    ) {
-      this.gotoStep(nextProps.goToStep);
+    if (goToStep && prevProps.isOpen && isOpen && current !== goToStep) {
+      this.gotoStep(goToStep);
     }
   }
+
+  // componentWillReceiveProps(nextProps) {
+  //   const { isOpen, update, updateDelay } = this.props;
+  //
+  //   if (!isOpen && nextProps.isOpen) {
+  //     this.open(nextProps.startAt);
+  //   } else if (isOpen && !nextProps.isOpen) {
+  //     this.close();
+  //   }
+  //
+  //   if (isOpen && update !== nextProps.update) {
+  //     if (nextProps.steps[this.state.current]) {
+  //       setTimeout(this.showStep, updateDelay);
+  //     } else {
+  //       this.hide();
+  //     }
+  //   }
+  //
+  //   if (isOpen && nextProps.isOpen && this.state.current !== nextProps.goToStep) {
+  //     this.gotoStep(nextProps.goToStep);
+  //   }
+  // }
 
   componentWillUnmount() {
     const { isOpen } = this.props;
@@ -252,6 +273,7 @@ class TourPortal extends Component {
         prevState => ({
           isOpen: true,
           isClosing: false,
+          isCurrentStepCoordinatesSaved: true,
           initialTop,
           initialLeft,
           current: startAt !== undefined ? startAt : prevState.current,
@@ -311,15 +333,14 @@ class TourPortal extends Component {
                   mutation.addedNodes.length > 0
                 ) {
                   const cb = () => stepCallback(mutation.addedNodes[0]);
-                  setTimeout(
-                    () =>
+                  // setTimeout(() =>
                       this.calculateNode(
                         mutation.addedNodes[0],
                         step.position,
                         cb
-                      ),
-                    100
-                  );
+                      )
+                      // , 100
+                  // );
                 } else if (
                   mutation.type === 'childList' &&
                   mutation.removedNodes.length > 0
@@ -361,39 +382,39 @@ class TourPortal extends Component {
   };
 
   calculateNode = (node, stepPosition, cb) => {
-    const { scrollDuration, inViewThreshold, scrollOffset } = this.props;
-    const attrs = hx.getNodeRect(node);
-    const w = Math.max(
-      document.documentElement.clientWidth,
-      window.innerWidth || 0
-    );
-    const h = Math.max(
-      document.documentElement.clientHeight,
-      window.innerHeight || 0
-    );
-    if (!hx.inView({ ...attrs, w, h, threshold: inViewThreshold })) {
-      const parentScroll = Scrollparent(node);
-      node.scrollIntoViewIfNeeded();
-      window.setTimeout(() => {
-        this.setState(
-          setNodeState(node, this.helper.current, stepPosition),
-          cb
-        );
-      }, 100);
-      // scrollSmooth.to(node, {
-      //   context: hx.isBody(parentScroll) ? window : parentScroll,
-      //   duration: scrollDuration,
-      //   // offset: scrollOffset || -(h / 2),
-      //   callback: nd => {
-      //     this.setState(
-      //       setNodeState(nd, this.helper.current, stepPosition),
-      //       cb
-      //     );
-      //   },
-      // });
-    } else {
-      this.setState(setNodeState(node, this.helper.current, stepPosition), cb);
-    }
+    window.setTimeout(() => {
+      const { scrollDuration, inViewThreshold, scrollOffset } = this.props;
+
+      const attrs = hx.getNodeRect(node);
+      const w = Math.max(
+        document.documentElement.clientWidth,
+        window.innerWidth || 0
+      );
+      const h = Math.max(
+        document.documentElement.clientHeight,
+        window.innerHeight || 0
+      );
+      if (!hx.inView({ ...attrs, w, h, threshold: inViewThreshold })) {
+        const parentScroll = Scrollparent(node);
+        node.scrollIntoViewIfNeeded();
+        // window.setTimeout(() => {
+        this.setState(setNodeState(node, this.helper.current, stepPosition), cb);
+        // }, 100);
+        // scrollSmooth.to(node, {
+        //   context: hx.isBody(parentScroll) ? window : parentScroll,
+        //   duration: scrollDuration,
+        //   // offset: scrollOffset || -(h / 2),
+        //   callback: nd => {
+        //     this.setState(
+        //       setNodeState(nd, this.helper.current, stepPosition),
+        //       cb
+        //     );
+        //   },
+        // });
+      } else {
+        this.setState(setNodeState(node, this.helper.current, stepPosition), cb);
+      }
+    }, 100);
   };
 
   close = () => {
@@ -409,7 +430,19 @@ class TourPortal extends Component {
           }
           return {
             isOpen: false,
+            // isCurrentStepCoordinatesSaved: false,
             observer: null,
+            // current: 0,
+            // top: 0,
+            // right: 0,
+            // bottom: 0,
+            // left: 0,
+            // initialTop: 0,
+            // initialLeft: 0,
+            // width: 0,
+            // height: 0,
+            // w: 0,
+            // h: 0,
           };
         }, this.onBeforeClose);
 
@@ -562,6 +595,7 @@ class TourPortal extends Component {
       isOpen,
       isClosing,
       isChangingStep,
+      isCurrentStepCoordinatesSaved,
       current,
       inDOM,
       top: targetTop,
@@ -584,7 +618,7 @@ class TourPortal extends Component {
         ? this.props.maskSpace
         : currentStep.maskSpace;
 
-    if (isOpen) {
+    if (isOpen && isCurrentStepCoordinatesSaved) {
       return (
         <div style={{ position: 'relative', zIndex: '9999999999' }}>
           {!isClosing && (
@@ -778,11 +812,12 @@ const setNodeState = (node, helper, position) => {
     return {
       w,
       h,
-      helperWidth,
-      helperHeight,
+      helperWidth: 150,
+      helperHeight: 130,
       helperPosition: position,
+      isCurrentStepCoordinatesSaved: true,
       ...attrs,
-      inDOM: node ? true : false,
+      inDOM: !!node,
     };
   };
 };
