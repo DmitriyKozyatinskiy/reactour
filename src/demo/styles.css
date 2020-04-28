@@ -33,7 +33,7 @@ body {
 }
 
 .reactour-dashed-border {
-  stroke-width: 5px;
+  stroke-width: 0.25rem;
   stroke-dasharray: 20;
   stroke-linecap: round;
   animation: reactour-moving-border 15s infinite linear;
