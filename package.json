@@ -4,7 +4,7 @@
   "description": "Kontra Reactour",
   "main": "dist/index.js",
   "scripts": {
-    "start": "webpack serve --open 'google-chrome'",
+    "start": "webpack serve --open 'google-chrome '",
     "prelib": "rimraf dist",
     "lib": "babel --out-dir dist --ignore *.test.js,src/demo src && cp src/index.css dist/index.css",
     "watch": "babel src --watch --out-dir dist --ignore *.test.js,src/demo",

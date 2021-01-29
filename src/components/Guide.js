@@ -80,14 +80,68 @@ const getPosition = (props) => {
   return pos(helperPosition);
 };
 
-const Guide = styled.div`
+const Guide = styled.div.attrs(props => {
+  const {
+    animationType,
+    shouldAppearStatically,
+    shouldDisappearOnClose,
+    isClosing,
+    initialTop,
+    initialLeft,
+  } = props;
+  const p = getPosition(props);
+
+  let transform;
+  if (shouldAppearStatically) {
+    transform = isClosing && shouldDisappearOnClose && animationType !== 'flicker' ? 'scale(0)' : 'scale(1)'
+  } else {
+    transform = isIE ? `translateX(${p[0]}px) translateX(-${initialLeft}px) translateY(${p[1]}px) translateY(-${initialTop}px) ${
+      isClosing && shouldDisappearOnClose && animationType !== 'flicker'
+        ? 'scale(0)'
+        : 'scale(1)'
+    }` : `translate(calc(${p[0]}px - ${initialLeft}px), calc(${p[1]}px - ${initialTop}px)) ${
+      isClosing && shouldDisappearOnClose && animationType !== 'flicker'
+        ? 'scale(0)'
+        : 'scale(1)'
+    }`;
+  }
+
+  const transition = props.shouldAppearStatically
+    ? `transform ${c.GUIDE_ANIMATION_TIME}ms`
+    : `transform ${c.GUIDE_ANIMATION_TIME}ms`;
+
+  let animation;
+  if (!props.helperWidth || !props.helperHeight) {
+    animation = 'none';
+  } else {
+    if (props.isClosing && props.shouldDisappearOnClose) {
+      if (props.animationType === 'flicker') {
+        animation = 'flicker-out 0.5s linear both';
+      } else {
+        animation = 'scale-out-center 0.2s cubic-bezier(0.55, 0.085, 0.68, 0.53) both'
+      }
+    } else {
+      if (props.shouldAppearStatically) {
+        animation = 'scale-in 0.2s cubic-bezier(0.55, 0.085, 0.68, 0.53) both';
+      } else {
+        animation = 'none';
+      }
+    }
+  }
+
+  return {
+    animation,
+    transition,
+    transform,
+    top: `calc(${p[1]}px - ${initialTop}px)`,
+    left: `calc(${p[0]}px - ${initialLeft}px)`,
+  };
+})`
   --reactour-accent: ${props => props.accentColor};
   position: fixed;
   background-color: #fff;
   padding: 24px 30px;
   box-shadow: 0 0.5em 3em rgba(0, 0, 0, 0.3);
-  #top: ${props => `${props.initialTop}px` || 0};
-  #left: ${props => `${props.initialLeft}px` || 0};
   color: inherit;
   z-index: 99999999999;
   max-width: 331px;
@@ -95,61 +149,11 @@ const Guide = styled.div`
   outline: none !important;
   padding-right: 40px;
   border-radius: ${props => props.rounded}px;
-  animation: ${props => {
-    if (!props.helperWidth || !props.helperHeight) {
-      return 'none';
-    }
-    
-    if (props.isClosing && props.shouldDisappearOnClose) {
-      if (props.animationType === 'flicker') {
-        return 'flicker-out 0.5s linear both';
-      } else {
-        return 'scale-out-center 0.2s cubic-bezier(0.55, 0.085, 0.68, 0.53) both'
-      }
-    } else {
-      if (props.shouldAppearStatically) {
-        return 'scale-in 0.2s cubic-bezier(0.55, 0.085, 0.68, 0.53) both';
-      } else {
-        return 'none';
-      }
-    }
-  }}
-  transition: ${props =>
-    props.shouldAppearStatically
-      ? `transform ${c.GUIDE_ANIMATION_TIME}ms`
-      : `transform ${c.GUIDE_ANIMATION_TIME}ms`}
-  ${props => {
-    const {
-      animationType,
-      shouldAppearStatically,
-      shouldDisappearOnClose,
-      isClosing,
-      initialTop,
-      initialLeft,
-    } = props;
-    const p = getPosition(props);
-    
-    let transform;
-    if (shouldAppearStatically) {
-      transform = isClosing && shouldDisappearOnClose && animationType !== 'flicker' ? 'scale(0)' : 'scale(1)'
-    } else {
-      transform = isIE ? `translateX(${p[0]}px) translateX(-${initialLeft}px) translateY(${p[1]}px) translateY(-${initialTop}px) ${
-        isClosing && shouldDisappearOnClose && animationType !== 'flicker'
-          ? 'scale(0)'
-          : 'scale(1)'
-      }` : `translate(calc(${p[0]}px - ${initialLeft}px), calc(${p[1]}px - ${initialTop}px)) ${
-        isClosing && shouldDisappearOnClose && animationType !== 'flicker'
-          ? 'scale(0)'
-          : 'scale(1)'
-      }`;
-    }
-    
-    return `
-      top: calc(${p[1]}px - ${initialTop}px);
-      left: calc(${p[0]}px - ${initialLeft}px);
-      transform: ${transform};
-    `;
-  }};
+  animation: ${props => props.animation};
+  transition: ${props => props.transition};
+  top: ${props => props.top};
+  left: ${props => props.left};
+  transform: ${props => props.transition};
 `;
 
 export default Guide;
